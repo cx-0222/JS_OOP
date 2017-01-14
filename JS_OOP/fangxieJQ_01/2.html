@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>TagName选择器仿写</title>
+		<style type="text/css">
+			#outer {
+				width: 100px;
+				height: 100px;
+				background-color: red;
+			}
+			div {
+				width: 300px;
+				height: 300px;
+				background-color: blue;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="outer">
+			<div id="inner">
+				<span></span>
+			</div>
+		</div>
+		<div>
+			<div class="second"></div>
+		</div>
+	</body>
+	<script type="text/javascript">
+		function selectEl(arg) {
+			//刨除两端的空格 中间是或符号
+			var reg = /^\s+|\s+$/g;
+			//字符串的替换 将两端的空格替换成null
+			arg = arg.replace(reg, "");
+			console.log("("+arg+")");//(div    div)
+			//多个空格查询
+			var reg1 = /\s+/g;
+			//将多个空格换成一个空格
+			arg = arg.replace(reg1," ");
+			//console.log("("+arg+")");//(div div)
+			//将字符串变为数组 
+			//条件数组
+			var elArr = arg.split(" ");
+			//console.log(elArr);//["div", "div"]
+			
+			var parentArr = [document];
+			for (var i = 0; i < elArr.length; i++) {
+				//i = 0 查找第一层 找出 document 下的所有div
+				//var child = document.getElementsByTagName(elArr[i]);
+				//第一层查找 是由document. 但第二次应该用上一次的结果. 所以应该有一个存放上次查找结果的数组
+				//是存储值 所以不可以每次循环更新 所以在for循环外面定义
+				//var parentArr = [document];
+				
+				var childArr = [];
+				for (var j = 0; j < parentArr.length; j++) {
+					//用临时的resultArr[]，来接收上一次查找的值
+					var resultArr = parentArr[j].getElementsByTagName(elArr[i]);
+					console.log(resultArr);
+					//将每遍查找的节点都push到childArr 中
+					//返回的的应该是最后一次满足条件的值
+					//所以每次将resultArr的值push给 childArr
+					//也就是说childArr里面的值就是最后一次满足条件的值 即我们要找的值
+					//childArr 在每一层循环for(i)时  都会更新 所以 保存的值 都是每一层查找的值，
+					for (var k = 0; k < resultArr.length; k++) {
+						childArr.push(resultArr[k]);
+						console.log(childArr);
+					}
+				}
+				//将childArr 赋值给 parentArr 参加下一次 循环 
+				//更新parentArr 
+				parentArr = childArr;
+			}
+			return parentArr;
+		}
+		
+		var arr = selectEl("   div    div ");
+		//console.log(arr);
+	</script>
+
+</html>

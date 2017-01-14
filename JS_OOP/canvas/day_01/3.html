@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>canvas矩形</title>
+	<style type="text/css">
+			#myCanvas {
+				border: 1px solid lightgray;
+				/*background-color: gainsboro;*/
+			}
+		</style>
+	</head>
+
+	<body>
+		<canvas id="myCanvas" width="500" height="500">
+			你的浏览器不支持canvas
+		</canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementsByTagName("canvas")[0];
+		canvas.width = 600;
+		canvas.height = 600;
+		var context = canvas.getContext("2d");
+		
+		context.beginPath();
+		context.moveTo(100,100);
+		context.lineTo(300,100);
+		context.lineTo(300,300);
+		context.lineTo(100,300);
+		context.closePath()
+		//context.stroke();
+		context.fillStyle = "olive";
+		context.fill()
+		
+		context.beginPath();
+		context.moveTo(100,100);
+		context.lineTo(200,0);
+		context.lineTo(300,100);
+		//context.lineTo(100,100);
+		context.closePath()
+		//context.stroke();
+		context.fillStyle = "burlywood";
+		context.fill()
+		
+		
+		
+		
+		
+		
+		
+	</script>
+</html>

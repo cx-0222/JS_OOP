@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>视频九宫格</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			
+			canvas {
+				box-shadow: 0 0 2px gainsboro;
+				background-color: black;
+			}
+		</style>
+	</head>
+
+	<body>
+		<video id="video" width="600" height="600" style="display: none;">
+			<source src="1.mp4" type="video/mp4"></source>
+			<source src="myvideo.ogv" type="video/ogg"></source>
+			<source src="myvideo.webm" type="video/webm"></source>
+			<object width="" height="" type="application/x-shockwave-flash" data="myvideo.swf">
+				<param name="movie" value="myvideo.swf" />
+				<param name="flashvars" value="autostart=true&amp;file=myvideo.swf" />
+			</object> 当前浏览器不支持 video直接播放，点击这里下载视频：
+			<a href="myvideo.webm">下载视频</a>
+		</video>
+		<canvas id="myCanvas" width="600" height="600"></canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+		var video = document.getElementById("video");
+
+		video.oncanplay = function() {
+			video.play();
+			//当视频可以播放的时候 进行播放调用循环
+			window.requestAnimationFrame(animate);
+		}
+		var numX = 3; //列数
+		var numY = 3 //行数
+		var jx = 2; //间隔
+
+		var offsetX = 0; //x*y宫格相对canvas（0，0）X坐标偏移量
+		var offsetY = 0; // x*y宫格相对canvas（0，0）Y坐标偏移量
+		//动画
+		function animate() {
+			//视频也是图片 
+			//将视频的每一帧 绘制在canvas上
+			context.drawImage(video, 0, 0, canvas.width, canvas.height);
+			//动画帧 requestAnimationFrame不需要使用者指定循环间隔时间，
+			//浏览器会基于当前页面是否可见、CPU的负荷情况等来自行决定最佳的帧速率，从而更合理地使用CPU。
+			//window.requestAnimationFrame(animate);
+
+			//对图片的处理也可以用来对视频左处理
+			var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
+			//console.log(imgData);
+			//九宫格
+			var wid = imgData.width / numX;
+			var hei = imgData.height / numY;
+			var arr = imgData.data;
+			for(var i = 0; i < numY; i++) { //列
+				for(var j = 0; j < numX; j++) { //行
+					context.putImageData(imgData, jx * j + offsetX, jx * i + offsetY, wid * j, hei * i, wid, hei);
+				}
+			}
+
+			for(var k = 0; k < numY; k++) { //列
+				for(var n = 0; n < numX; n++) { //行
+					var imgDataS = context.getImageData(200 * k, 200 * n, wid, hei);
+					var arr = imgDataS.data;
+					//console.log(n)
+					for(var s = 0; s < arr.length; s += 4) {
+						if(n == 0 && k == 0 || n == 0 && k == 2) {
+							arr[s] = 255;
+						} else if(n == 1 && k == 1) {
+							arr[s + 1] = 255;
+						} else if(n == 2 && k == 2 || n == 2 && k == 0) {
+							arr[s + 2] = 255;
+						}
+
+					}
+					context.putImageData(imgDataS, 200 * k, 200 * n);
+				}
+			}
+
+			window.requestAnimationFrame(animate);
+		}
+		animate();
+	</script>
+
+</html>

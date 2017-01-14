@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>画板</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			
+			canvas {
+				box-shadow: 0 0 2px gray;
+				margin-left: 20px;
+			}
+			a {
+				text-decoration: none;
+				font-size: 12px;
+				border: 1px solid #DBDBDB;
+				border-radius: 3px;
+			}
+			
+			
+		</style>
+	</head>
+	<body>
+		<canvas id="myCanvas" width="600" height="600"></canvas>
+		<button class="pen">画笔</button>
+		<button class="eraser">橡皮</button>
+		<a id="load">图片预览</a>
+		<a id="down">图片下载</a>
+		
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+		var pen = document.getElementsByClassName("pen")[0];
+		var eraser = document.getElementsByClassName("eraser")[0];
+		var down = document.getElementById("down");
+		var load = document.getElementById("load");
+		
+		
+//		context.beginPath();
+//		context.moveTo(100,100);
+//		context.lineTo(200,200);
+//		context.lineTo(400,200);
+//		context.lineWidth = 20;
+//		context.lineCap = "round";
+//		context.stroke();
+		
+		//context.lineWidth = 20;
+		//context.lineCap = "round";
+		//context.beginPath();
+		//context.lineCap = "round";
+//		context.moveTo(100,100);
+//		context.lineTo(200,200);
+//		context.stroke();
+//		context.lineCap = "round";
+//		context.beginPath();
+//		context.moveTo(100,100);
+//		context.lineTo(400,200);
+//		context.stroke();
+		
+		pen.onclick = function(){
+			canvas.onmousedown = function(e){
+				//1.找到起点
+				var ev = e || window.event;
+				var x = ev.clientX - canvas.offsetLeft;
+				var y = ev.clientY - canvas.offsetTop;
+				context.beginPath();
+				context.lineCap = "round";
+				context.moveTo(x,y);
+				document.onmousemove = function(e){
+					var ev = e || window.event;
+					var x = ev.clientX - canvas.offsetLeft;
+					var y = ev.clientY - canvas.offsetTop;
+					context.lineTo(x,y);
+					context.stroke();
+					
+				}
+			}
+			document.onmouseup = function(){
+				document.onmousemove = null;
+			}
+		}
+		
+		
+		
+		eraser.onclick = function(){
+			canvas.onmousedown = function(e){
+				document.onmousemove = function(e){
+					var ev = e || window.event;
+					var x = ev.clientX - canvas.offsetLeft - 15;//15擦子的一半
+					var y = ev.clientY - canvas.offsetTop - 15;
+					context.clearRect(x,y,30,30)
+				}
+			}
+			document.onmouseup = function(){
+				document.onmousemove = null;
+			}
+		}
+		
+		load.onclick = function(){
+			var url = canvas.toDataURL();
+			window.location.href = url;
+		}
+	</script>
+</html>

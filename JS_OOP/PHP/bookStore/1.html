@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>网站首页</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			
+			.wrap {
+				width: 100vw;
+				/*height: 2000px;*/
+			}
+			
+			.coverWarp {
+				width: 100%;
+				height: 45%;
+				/*background-color: red;*/
+				/*text-align:center;*/
+			}
+			
+			.cover {
+				margin: 0 auto;
+				width: 60%;
+				/*height: 100%;*/
+				background-color: #EEEEEE;
+				text-align: center;
+				border: 1px solid white;
+			}
+			
+			.cover h1 {
+				margin-top: 5%;
+				margin-bottom: 1%;
+				font-size: 50px;
+			}
+			
+			.cover p {
+				font-size: 20px;
+				margin-bottom: 1%;
+			}
+			
+			.cover img {
+				width: 70%;
+				/*height: 70%;*/
+				margin-bottom: 3%;
+			}
+			
+			.contentWarp {
+				width: 100%;
+				height: 50%;
+				/*background-color: red;*/
+				/*border: 1px solid white;*/
+				margin-top: 5%;
+			}
+			
+			.content {
+				margin: 0 auto;
+				width: 60%;
+				/*height: 100%;*/
+				/*background-color: hotpink;*/
+			}
+			
+			.book_ul {
+				list-style-type: none;
+			}
+			.book_ul li {
+				float: left;
+			}
+			.book_ul_li1 {
+				width: 30%;
+				height: 100%;
+				border: 1px solid #E6E6E6;
+				border-radius: 5px;
+				text-align: center;
+				/*margin-right: 1.5%;
+				margin-left: 1.5%;*/
+				margin: 1.5%;
+			}
+			
+			.book_img {
+				border: none;
+				margin-top: 5%;
+				width: 70%;
+			}
+			
+			.book_name {
+				display: block;
+				margin-top: 10%;
+				margin-bottom: 10%;
+				text-align: center;
+				font-size: 30px;
+			}
+			
+			.book_price {
+				font-size: 20px;
+				float: left;
+				margin-left: 5%;
+				margin-top: 2.8%;
+			}
+			
+			.buy {
+				display: inline-block;
+				width: 80px;
+				height: 30px;
+				font-size: 18px;
+				background-color: #42AE58;
+				color: white;
+				line-height: 35px;
+				border-radius: 5px;
+				box-shadow: 0 0 2px #1CB048;
+				margin-bottom: 10%;
+				margin-left: 18%;
+			}
+			
+			.book_ul_li2 {
+				width: 30%;
+				height: 100%;
+				border: 1px solid #E6E6E6;
+				border-radius: 5px;
+				text-align: center;
+				/*margin-right: 1.5%;
+				margin-left: 1.5%;*/
+				margin: 1.5%;
+			}
+			.book_ul_li3 {
+				width: 30%;
+				height: 100%;
+				border: 1px solid #E6E6E6;
+				border-radius: 5px;
+				text-align: center;
+				/*margin-right: 1.5%;
+				margin-left: 1.5%;*/
+				margin: 1.5%;
+			}
+			.book_ul_li4 {
+				width: 30%;
+				height: 100%;
+				border: 1px solid #E6E6E6;
+				border-radius: 5px;
+				text-align: center;
+				/*margin-right: 1.5%;
+				margin-left: 1.5%;*/
+				margin: 1.5%;
+			}
+			
+			/*头部*/
+			.navWarp {
+				width: 100%;
+				height: 4.2em;
+				background-color: #222222;
+			}
+			.nav {
+				width: 60%;
+				height: 100%;
+				/*background-color: red;*/
+				margin: 0 auto;
+			}
+			.nav_ul {
+				list-style: none;
+				text-align: center;
+				
+			}
+			.nav_ul li{
+				height: 65px;
+				width: 17%;
+				display: inline-block;
+				/*margin: 4% 2%*/;
+				line-height: 65px;
+				
+			}
+			.nav_ul li a{
+				text-decoration: none;
+				color: #939393;
+				font-size: 20px;
+			}
+			.index:hover {
+				color: white;
+			}
+			
+			.status {
+				color: #939393;
+			}
+			.cancel {
+				color: #939393;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="wrap">
+			<div class="navWarp">
+				<div class="nav">
+					<ul class="nav_ul">
+						<li ><a class="index" href="index.php" style="color: white;">书城首页</a></li>
+						<li><a href="">添加图书</a></li>
+						<li><a href="">购物车</a></li>
+						<li><a href="">登录</a></li>
+						<li><a href="">注册</a></li>
+						<span class="status">未登录</span>
+						<span class="cancel">注销</span>
+					</ul>
+					
+				</div>
+				
+			</div>
+			<div class="coverWarp">
+				<div class="cover">
+					<h1>我的书城</h1>
+					<p>这里拥有世界各地的书籍，只有你想不到，没有我们这里没有的书籍</p>
+					<img src="img/1.png" />
+				</div>
+			</div>
+			<div class="contentWarp">
+				<div class="content">
+					<ul class="book_ul">
+						<li class="book_ul_li1">
+							<img class="book_img" src="img/2.jpg" />
+							<span class="book_name">巨人的陨落</span>
+							<span class="book_price">￥110.50</span>
+							<div class="buy">立即购买</div>
+						</li>
+						<li class="book_ul_li2">
+							<img class="book_img" src="img/2.jpg" />
+							<span class="book_name">巨人的陨落</span>
+							<span class="book_price">￥110.50</span>
+							<div class="buy">立即购买</div>
+						</li>
+						<li class="book_ul_li3">
+							<img class="book_img" src="img/4.jpg" />
+							<span class="book_name">巨人的陨落</span>
+							<span class="book_price">￥110.50</span>
+							<div class="buy">立即购买</div>
+						</li>
+						
+						<li class="book_ul_li4">
+							<img class="book_img" src="img/2.jpg" />
+							<span class="book_name">巨人的陨落</span>
+							<span class="book_price">￥110.50</span>
+							<div class="buy">立即购买</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</body>
+
+</html>

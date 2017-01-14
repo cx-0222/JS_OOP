@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>参照jq的ajax仿写ajax</title>
+	</head>
+
+	<body>
+		<div id="div"></div>
+	</body>
+	<script src="../day_01/JQuery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		
+	//1.方法就是个对象 
+		//var aaa = function (){
+			
+		//}
+		//aaa.a = "ccc";
+		//console.log(aaa.a);
+		
+		
+	//2.对jq对象的扩展 extend 扩展
+		//$.fn.extend({
+			//haha:function(){
+				//console.log("haha");
+			//}
+		//})
+		//$("#div").haha();
+	//3.$. 表示一个方法 对其的扩展 在上面再绑定一个方法
+		//$.extend({
+			//talk:function(){
+				//console.log("你是小王吧");
+			//}
+		//});
+		//$.talk();	
+		
+		
+//!!!!!仿写的格式
+		//{
+			//type:"get",
+			//url:"",
+			//succeed:function(data){
+				
+			//}
+		//}
+		function ajax(obj) {
+			//1.创建对象
+			var ajax = {};
+			if(window.XMLHttpRequest) {
+				ajax = new XMLHttpRequest();
+			} else if(window.ActiveXObject) {
+				//!!!!
+				ajax = new ActiveXObject("microsoft.XMLHTTP");
+			}
+			//2.判断请求方式
+			if(obj.type == "get") {
+				var url = path(obj.data,obj.type,obj.url);
+				ajax.open("get",url);
+				ajax.send();
+			} else if(obj.type == "post") {
+				var datas = path(obj.data,obj.type,obj.url);
+				ajax.open("post",obj.url);
+				ajax.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+				ajax.send(datas);
+			}
+
+			//
+			ajax.onreadystatechange = function() {
+				//5.判断请求zhuangt
+				if(ajax.readyState == 4) {
+					//6.判断请求结果
+					if(ajax.status == 200) {
+						obj.succeed(ajax.responseText);
+					}else{
+						obj.error();
+					}
+				}
+			}
+		}
+		
+		//辅助函数 用来传数据 将data 拼接成 name=cx&password=123 的形式
+		//当请求方式为get的时候 在 obj.url后面 直接用 ？拼接
+		//当请求方式为post的时候 将拼接好的data放在send里面
+		function path(obj,type,url){
+			var arr = [];
+			for (var keys in obj) {
+				//得到 name=cx 的形式
+				var str = keys+"="+obj[keys];
+				//console.log(str);
+				arr.push(str);
+			}
+			var datas = arr.join("&");
+			//console.log(datas);
+			if (type == "get") {
+				var urls = url+"?"+datas;
+				return urls;
+			} else if(type == "post"){
+				return datas;
+			}
+		}
+		//var result = path({
+			//name:"cx",
+			//password:"111",
+		//},"post","1.php");
+		//console.log(result);
+
+		ajax({
+			type:"get",
+			url:"1.php",
+			data: {
+					name: "cx",
+					password:"111"
+				},
+			succeed:function(data){
+				console.log("成功");
+				console.log(data);
+			},
+			error:function(errors){
+				console.log(errors);
+			}
+		})
+	</script>
+
+</html>

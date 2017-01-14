@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>碰撞的小球</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			
+			canvas {
+				box-shadow: 0 0 2px gray;
+				margin-left: 20px;
+			}
+			
+		</style>
+	</head>
+	<body>
+		<canvas id="myCanvas" width="600" height="600"></canvas>
+		
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+
+//		context.beginPath();
+//		context.fillStyle = "cadetblue";
+//		context.fillRect(100,100,50,50);
+		
+		function Rect(x,y,w,h,color,speed){
+			this.x = x;
+			this.y = y;
+			this.w = w;
+			this.h = h;
+			this.color = color;
+			this.speed = speed;
+		}
+		
+		Rect.prototype.draw = function(){
+			context.beginPath();
+			context.fillStyle = this.color;
+			context.fillRect(this.x,this.y,this.w,this.h);
+		}
+		var rect1 = new Rect(100,100,50,50,"red",2);
+		function ani(){
+			context.clearRect(0,0,canvas.width,canvas.height)
+			rect1.x +=  rect1.speed;
+			//判断是否碰壁
+			
+			rect1.draw();
+			window.requestAnimationFrame(ani)
+		}
+		
+		ani();
+	</script>
+</html>

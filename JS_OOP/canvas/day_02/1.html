@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>旋转太极 思路讲解</title>
+		<style type="text/css">
+			#myCanvas {
+				background-color: gainsboro;
+			}
+		</style>
+	</head>
+
+	<body>
+		<canvas id="myCanvas" width="600" height="600"></canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+		var deg = Math.PI / 180;
+
+		//context.fillRect(200, 200, 200, 200);
+		//context.translate(300, 300);
+		//context.rotate(45 * deg);
+		//context.translate(-300, -300);
+		//context.fillStyle = "red";
+		//context.fillRect(200, 200, 200, 200);
+
+		function rotates(timer) {
+			context.translate(300, 300);
+			context.rotate(timer * deg);
+			context.translate(-300, -300);
+			context.fillStyle = "red";
+			context.fillRect(200, 200, 200, 200);
+		}
+		
+		var timer = 0
+		function ani(){
+			timer++;
+			context.clearRect(0,0,canvas.width,canvas.height);
+			rotates(timer);
+			window.requestAnimationFrame(ani);
+		}
+		ani();
+	</script>
+
+</html>

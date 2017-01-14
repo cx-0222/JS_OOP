@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>图形组合</title>
+	<style type="text/css">
+			#myCanvas {
+				background-color: gainsboro;
+			}
+		</style>
+	</head>
+
+	<body>
+		<canvas id="myCanvas" width="600" height="600"></canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+		
+		
+		
+		context.fillStyle = "red";
+		context.fillRect(100,100,300,300);
+		//默认 在目标图像上显示源图像  目标图像：先画的红的   源图像: 后画的绿的
+		//context.globalCompositeOperation = "source-over";
+		//只显示在目标图像里面的源图像 超出的部分不可见
+		//context.globalCompositeOperation = "source-atop";
+		//以源图像的颜色来显示重叠部分 其他的不可见
+		//context.globalCompositeOperation = "source-in";
+		//显示目标图像之外的源图像
+		//context.globalCompositeOperation = "source-out";
+		//在源图像上面显示目标图像
+		//context.globalCompositeOperation = "destination-over";
+		//只显示在源图像里面的目标图像 超出的部分不可见
+		//context.globalCompositeOperation = "destination-atop";
+		//以目标图像颜色显示重叠部分 且源图像 即后画的是透明的 
+		//context.globalCompositeOperation = "destination-in";
+		//源图像是透明的，所以只显示出源图像外的目标图像
+		//context.globalCompositeOperation = "destination-out";
+		//显示目标图像和源图像 且重合部分变色
+		//context.globalCompositeOperation = "lighter";
+		//显示源图像 忽略目标图像
+		//context.globalCompositeOperation = "copy";
+		
+		context.fillStyle = "green";
+		context.fillRect(300,300,200,200);
+		
+		
+	</script>
+		
+</html>

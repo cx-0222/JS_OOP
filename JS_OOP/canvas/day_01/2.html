@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>canvas 绘制三角形</title>
+		<style type="text/css">
+			#myCanvas {
+				border: 1px solid lightgray;
+				/*background-color: gainsboro;*/
+			}
+		</style>
+	</head>
+
+	<body>
+		<canvas id="myCanvas" width="500" height="500">
+			你的浏览器不支持canvas
+		</canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementsByTagName("canvas")[0];
+		canvas.width = 600;
+		canvas.height = 600;
+		var context = canvas.getContext("2d");
+		
+		context.beginPath();
+		//起点
+		context.moveTo(100,100);
+		//下一个点
+		context.lineTo(300,300);
+		context.lineTo(100,400);
+		//闭合 由当前点连接到起始点形成一个封闭的路径
+		//context.lineTo(100,100);
+		context.closePath()
+		//context.stroke();
+		//填充
+		context.fillStyle = "aquamarine"//填充样式 必须设置在填充之前
+		context.fill()
+	</script>
+</html>

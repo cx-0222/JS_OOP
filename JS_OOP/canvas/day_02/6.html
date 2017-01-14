@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>图像的处理</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			#myCanvas {
+				position: absolute;
+				background-color: gainsboro;
+				
+			}
+			
+			
+		</style>
+	</head>
+	<body>
+	
+		<canvas id="myCanvas" width="800" height="451"></canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+		
+
+		
+		var img = new Image();
+		img.src = "7.jpeg";
+		
+		img.onload = function(){
+			//载入图片
+			context.drawImage(img,100,56);
+			//控制图片
+			//context.drawImage(img,0,0,canvas.width,canvas.height);
+			//裁减
+			//context.drawImage(图片,截取的坐标x,y,取多宽,多高,截取后放哪x,y,宽,高);
+			//context.drawImage(img,100,80,380,240,0,0,380,240);
+			
+			var imgData = context.getImageData(100,56,img.width,img.height);
+			//console.log(imgData);
+			var arr = imgData.data;
+			for (var i = 0; i < arr.length; i+=4) {
+				var r = arr[i];
+				//arr[i] = 255 红
+				//arr[i+1] = 255 绿
+				//arr[i+2] = 255 蓝
+				var g = arr[i+1];
+				var b = arr[i+2];
+				//反色
+				//arr[i] = 255-r;
+				//arr[i+1] = 255-g;
+				//arr[i+2] = 255-b;
+				var piexls = parseInt((r+g+b)/3);
+				arr[i] = piexls;
+				arr[i+1] = piexls;
+				arr[i+2] = piexls;
+				
+			}
+			context.putImageData(imgData,0,0)
+		}
+	</script>
+</html>
+

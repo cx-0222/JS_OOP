@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>碰撞的小球</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			
+			canvas {
+				box-shadow: 0 0 2px gray;
+			}
+			
+		</style>
+	</head>
+	<body>
+		<canvas id="myCanvas" width="600" height="600"></canvas>
+		
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+
+		function Qiu(x,y,r,color,speedX,speedY){
+			this.x = x;
+			this.y = y;
+			this.r = r;
+			this.color = color;
+			this.speedX = speedX;
+			this.speedY = speedY;
+		}
+		
+		Qiu.prototype.draw = function(){
+			//console.log(this.x,this.y,this.r)
+			context.beginPath();
+			context.arc(this.x,this.y,this.r,0,2*Math.PI);
+			context.fillStyle = this.color;
+			context.fill();
+		}
+		Qiu.prototype.move = function(){
+			//检测碰壁反弹
+			if(this.x + this.r >= canvas.width || this.x <= this.r){
+				this.speedX = this.speedX * (-1);
+			}
+			if(this.y + this.r >= canvas.height || this.y <= this.r){
+				this.speedY = this.speedY * (-1);
+			}
+			
+			this.x += this.speedX;
+			this.y += this.speedY;
+		}
+		
+		//qiu.draw()
+		var qiuArr = [];
+		for (var i = 0; i < 50; i++) {
+			var r = rand(5,20);
+			var x = rand(r,canvas.width-r);
+			var y = rand(r,canvas.height-r);
+			var rr = rand(0,255);
+			var gg = rand(0,255);
+			var bb = rand(0,255);
+			var color = "rgb(" + rr + "," + gg + "," + bb + ")";
+			var speedX = rand(2,8);
+			var speedY = rand(2,8);
+			
+			var qiu = new Qiu(x,y,r,color,speedX,speedY);
+			qiuArr.push(qiu);
+			//console.log(qiuArr)
+		}
+		
+		function ani(){
+			//console.log(1111)
+			context.clearRect(0,0,canvas.width,canvas.height);
+			for (var i = 0; i < qiuArr.length; i++) {
+				qiuArr[i].move();
+				//console.log(qiuArr[i]);
+				qiuArr[i].draw();
+			}
+			window.requestAnimationFrame(ani)
+		}
+		
+		ani();
+		function rand(min,max){
+			return parseInt(Math.random()*(max-min)+min)
+		}
+		
+	</script>
+</html>
+

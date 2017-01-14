@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>保存 与 读取 画布属性</title>
+	<style type="text/css">
+			#myCanvas {
+				border: 1px solid lightgray;
+				background-color: gainsboro;
+			}
+		</style>
+	</head>
+
+	<body>
+		<canvas id="myCanvas" width="500" height="500">
+			你的浏览器不支持canvas
+		</canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementsByTagName("canvas")[0];
+		canvas.width = 600;
+		canvas.height = 600;
+		var context = canvas.getContext("2d");
+		
+		
+		//context.fillStyle = "royalblue";
+		//context.fillRect(0,0,200,200);
+		//画布旋转
+		//context.rotate(0.25*Math.PI);
+		//context.fillRect(325,0,200,200);
+		//旋转回去
+		//context.rotate(-0.25*Math.PI);
+		//context.fillRect(400,400,200,200);
+		
+		context.fillStyle = "red";
+		//保存画布属性
+		context.save();
+		context.fillStyle = "blue";
+		//类似栈，先入后出 先取出后保存的
+		context.save();
+		context.fillRect(100,100,300,300);
+		//读取上次保存的属性值;
+		context.restore();
+		context.fillRect(200,200,400,400);
+	</script>
+</html>
+

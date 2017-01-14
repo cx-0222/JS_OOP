@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>白天知识点复习~画板</title>
+		<style type="text/css">
+			#myCanvas {
+				box-shadow: 0 0 2px red;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="myCanvas" width="600" height="600"></canvas>
+		<button id="pen">画笔</button>
+		<button id="eraser">橡皮</button>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+		var pen = document.getElementById("pen");
+		var eraser = document.getElementById("eraser");
+		
+		pen.onclick = function(){
+			draw();
+		}
+		
+		
+		function draw(){
+			//以划线的方式来写画笔功能
+			canvas.onmousedown = function(e){
+				//起点
+				var ev = e || window.event;
+				var x = ev.clientX - canvas.offsetLeft;
+				var y = ev.clientY - canvas.offsetTop;
+				context.beginPath();
+				context.strokeStyle = "red";
+				context.lineWidth = 4;
+				context.lineCap = "round";
+				context.moveTo(x,y);
+				canvas.onmousemove = function(e){
+					//绘制线条
+					var ev = e || window.event;
+					var x = ev.clientX - canvas.offsetLeft;
+					var y = ev.clientY - canvas.offsetTop;
+					context.lineTo(x,y);
+					context.stroke();
+				}
+				document.onmouseup = function(){
+					canvas.onmousemove = null;
+				}
+			}
+		}
+		
+		eraser.onclick = function(){
+			drawE();
+		}
+		function drawE(){
+			canvas.onmousedown = function(e){
+				canvas.onmousemove = function(e){
+					//绘制线条
+					var ev = e || window.event;
+					var x = ev.clientX - canvas.offsetLeft - 15;
+					var y = ev.clientY - canvas.offsetTop - 15;
+					context.clearRect(x,y,30,30);
+					
+				}
+				document.onmouseup = function(){
+					canvas.onmousemove = null;
+				}
+			}
+		}
+	</script>
+</html>

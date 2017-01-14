@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>2048</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			html,body {
+				width: 100%;
+			}
+			#scoreBoard {
+				width: 100%;
+				text-align: center;
+				font-size:15px ;
+				font-weight: bold;
+			}
+			#scoreBoard .title {
+				color: #666666;
+			}
+			#score {
+				color: #FF6633;
+			}
+			
+			#canvas {
+				position: absolute;
+				left: 50%;
+				margin-left: -150px;
+				top: 50%;
+				margin-top: -150px;
+				/*border: 1px solid black;*/
+			}
+			#again {
+				position: absolute;
+				bottom: 0;
+				width: 100%;
+				text-align: center;
+			}
+			#again input {
+				width: 280px;
+				height: 40px;
+				color: white;
+				border: 0;
+				background-color: #FF6633;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="wrap">
+			<div id="scoreBoard"><br />
+				<span class="title">分数：</span><span id="score">0</span>
+			</div>
+			<div id="Game">
+				<canvas id="canvas" width="300" height="300">浏览器版本太低</canvas>
+			</div>
+			<div id="again">
+				<input type="button" id="moreTime" value="再玩一次" />
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript">
+		//获取画布以及上下文
+		var cvs = document.getElementById("canvas");
+		var ctx = cvs.getContext("2d");
+		//小正方形的宽高
+		var stdWidth = cvs.width / 4 - 5;
+		var stdHeight = stdWidth;//70
+		
+		//背景构造函数
+		function Background(){}
+		//绘制背景
+		Background.prototype.draw = function(){
+			ctx.fillStyle = "#bcad9d";
+			ctx.fillRect(0,0,cvs.width,cvs.height);
+			this.addRect();
+		}
+		Background.prototype.addRect = function(){
+			//利用双层for循环来绘制小矩形
+			for (var i = 0; i < 4; i++) {//控制行
+				for (var j = 0; j < 4; j++) {//控制列
+					ctx.fillStyle = "#cdbfb5";
+					ctx.fillRect(i*stdWidth+15, j*stdHeight+15,stdWidth-10,stdHeight-10);
+				}
+			}
+		}
+		var back = new Background();
+		back.draw();
+		
+		
+		function Img(position,value){
+			this.colors = ["#EEE4DA", "#EFE0CB", "#F3B079", "#F59565", "#F75E3E", "#FF6600", "#EDCE71", "#EDCD60", "#FFCC33", "#FF6633", "#FFFF00"];
+			this.txtColors =["#666", "#666", "#fff", "#fff", "#fff", "#fff", "#fff", "#fff", "#fff", "#fff", "#fff"];
+			//数字方块初始位置
+			this.startPosition = position;
+			//this.startPosition = {
+				//x:0,
+				//y:0
+			//};
+			//数字方块移动的目标位置
+			this.endPosition = {
+				x:null,
+				y:null
+			};
+			this.step = 0;
+			//数字方块是否到达目标位置 false表示没 需要移动 true 表示不需要移动
+			this.arrived = false;
+			this.value = value;
+			
+			//
+			this.fangxiang = 37;
+		}
+		//按坐标绘制数字小方块
+		Img.prototype.drawByPosition = function(){
+			var x = this.startPosition.x * stdWidth + 15;
+			var y = this.startPosition.y * stdHeight + 15;
+			ctx.fillStyle = this.colors[this.value];
+			ctx.fillRect(x,y,stdWidth-10,stdHeight-10);
+			this.drawText(x,y);
+		}
+		Img.prototype.drawText = function(x,y){
+			ctx.fillStyle = this.txtColors[this.value];
+			ctx.font = stdWidth*0.3 + "px sans-serif";
+			ctx.textAlign = "center";
+			ctx.textBaseline = "middle";
+			ctx.fillText(Math.pow(2,this.value),x+stdWidth*0.4,y+stdHeight*0.4);
+		}
+		Img.prototype.move = function(){
+			var x = this.startPosition.x * stdWidth + 15;
+			var y = this.startPosition.y * stdHeight + 15;
+			this.step += 20;
+			switch(this.fangxiang){
+				case 37:
+				//向左 x 减小
+					x = x - this.step;
+					if(x <= this.endPosition.x * stdWidth + 15){
+						x = this.endPosition.x * stdWidth + 15;
+						this.startPosition.x = 0;
+						this.step = 0;
+						this.arrived = true;
+					}
+					break;
+				case 38:
+				//向上 y 减小
+					y = y - this.step;
+					if(y <= this.endPosition.y * stdHeight + 15){
+						y = this.endPosition.y * stdHeight + 15;
+						this.startPosition.y = 0;
+						this.step = 0;
+						this.arrived = true;
+					}
+					break;
+				case 39:
+				//向右 x 增加
+					x = x + this.step;
+					if(x >= this.endPosition.x * stdWidth + 15){
+						x = this.endPosition.x * stdWidth + 15;
+						this.startPosition.x = 0;
+						this.step = 0;
+						this.arrived = true;
+					}
+					break;
+				case 40:
+					y = y + this.step;
+					if(y >= this.endPosition.y * stdHeight + 15){
+						y = this.endPosition.y * stdHeight + 15;
+						this.startPosition.y = 0;
+						this.step = 0;
+						this.arrived = true;
+					}
+					break;
+			}
+			//???
+			//ctx.fillStyle = this.colors[this.value];
+			//ctx.fillRect(x,y,stdWidth - 10,stdHeight - 10);
+			//this.drawText(x,y);
+		}
+		//var img = new Img(2);
+		//img.drawByPosition();
+		//img.drawText();
+		
+		
+	</script>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			.scoreDiv {
+				margin: 0 auto;
+				width: 412px;
+				height:200px;
+				border: 1px solid black;
+				text-align: center;
+				line-height: 200px;
+				font-size: 20px;
+			}
+			.btn {
+				margin-top: 20px;
+				text-align: center;
+				
+			}
+			.start , .end {
+				/*width: 50px;*/
+				/*height: 30px;*/
+				font-size: 20px;
+			}
+			a {
+				display: block;
+				margin-top: 20px;
+				font-size: 25px;
+				text-decoration: none;
+				color: black;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="scoreDiv">
+			分数：<span class="score">0</span>
+		</div>
+		<div class="btn">
+			<button class="start">开始</button>
+			<button class="end">结束</button>
+			<a href="rank.html">排名榜</a>
+		</div>
+		
+		
+	</body>
+	<script src="JQuery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		var start = document.getElementsByClassName("start")[0];
+		var end = document.getElementsByClassName("end")[0];
+		var score = document.getElementsByClassName("score")[0];
+		function randomNum(max,min){
+			return parseInt(Math.random()*(max-min)+min);
+		}
+		//console.log(randomNum(5,1));
+		var timer = null;
+		start.onclick = function(){
+			timer = setInterval(function(){
+				score.innerHTML = randomNum(5,1);
+			},1000);
+		};
+		end.onclick = function(){
+			//console.log(111);
+			clearInterval(timer);
+			//console.log(score.innerHTML);
+			
+			$.ajax({
+				type:"get",
+				url:"random.php",
+				data:{
+					score:score.innerHTML
+				},
+				//dataType:"json",
+				success:function(data){
+					console.log("成功");
+					console.log(data);
+				},
+				error:function(errors){
+					console.log("失败");
+					console.log(errors);
+				}
+			});
+		}
+		
+	</script>
+</html>

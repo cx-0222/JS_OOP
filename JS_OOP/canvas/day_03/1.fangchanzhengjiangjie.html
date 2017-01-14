@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>房产证讲解</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			
+			canvas {
+				box-shadow: 0 0 2px gray;
+				position: absolute;
+			}
+			
+			#name {
+				position: absolute;
+				left: 177px;
+				top: 121px;
+				z-index: 10;
+			}
+			
+			#time {
+				position: absolute;
+				left: 177px;
+				top: 209px;
+				z-index: 10;
+			}
+			
+			#as {
+				text-decoration: none;
+				border: 1px solid #BABABA;
+				padding: 2px;
+				font-size: 11px;
+				border-radius: 3px;
+				position: absolute;
+				left: 590px;
+				top: 398px;
+				color: black;
+			}
+			
+			button {
+				position: absolute;
+				left: 560px;
+				top: 400px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<input type="text" id="name" />
+		<input type="text" id="time" />
+		<canvas id="myCanvas" width="549" height="412"></canvas>
+		<button>购买</button>
+		<a id="as" href="">下载</a>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext('2d');
+		var names = document.getElementById("name");
+		var times = document.getElementById("time");
+		var btn = document.getElementsByTagName("button")[0];
+		var as = document.getElementById("as");
+		var img = new Image();
+		img.src = "1.jpg";
+		var url;
+		img.onload = function() {
+				context.drawImage(img, 0, 0);
+				//url = canvas.toDataURL();//2
+			}
+		//知识点 1 ，获取URL的时机
+			//var url = canvas.toDataURL();//1
+			//用 1 方法 放在 onload 外面 -- 涉及到事件时机，
+			//此时img.onload只是绑定了事件 并未执行 
+			//所以下载下来的时空白，因为img.onload绑定的事件还没执行
+			//但2 方法不一样 表示在图片加载完成后才去获取url 此时获取的URL就是我们想要的
+			
+		function sub() {
+			var namess = names.value;
+			context.strokeText(namess, names.offsetLeft, names.offsetTop);
+			var timess = times.value;
+			context.strokeText(timess, times.offsetLeft, times.offsetTop);
+			url = canvas.toDataURL(); 
+			//window.location.href = url;//也是实现跳转
+			as.href = url; //实现跳转
+			//下载方法 ① 
+			as.download = 'image.png';//实现下载 imgs.jpg下载文件的文件名
+			//as.click();//在点击购买的时候 也触发a的点击方法 而a的点击方法 就是下载
+			
+			//"image/jpeg",0.6(表示图片质量)  ？？？ 肿么用？？？
+			
+			//下载方法 ② 
+				//第二种方法需要将我们生成的图片的URL类型
+				//换成image/octet-stream这样当你点击我们a标签的时候浏览器就知道我是要进行下载了
+				//url = canvas.toDataURL('image/png').replace("image/png","image/octet-stream")
+				//这里的image不可以改成别的
+		}
+		
+		//当我们进去了按钮的点击方法，就代表着
+		//此时的用户已经填写好他想要的名字和时间
+		//所以此时我们就可以获取input框的值
+		//然后绘制到我们的canvas上面
+		//当我们的文字绘制到canvas上面的时候 
+		//就是我们要做成图片的样子
+		//此时就可以用生成图片的方法进行生成了
+		btn.onclick = function() {
+			canvas.style.zIndex = 99;
+			sub();
+		}
+	</script>
+
+</html>

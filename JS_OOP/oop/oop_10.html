@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>克隆</title>
+	</head>
+	<body>
+	</body>
+	<script type="text/javascript">
+		var obj = {name:'lck'}
+		console.log(obj);//Object {name: "lck"}
+		
+		var str = JSON.stringify(obj);
+		console.log(str);//{"name":"lck"}
+		console.log(typeof str);//string
+		
+		var obj1 = JSON.parse(str);
+		//由字符串变成对象 开辟了一个新空间
+		console.log(obj1);//Object {name: "lck"}
+		console.log(typeof obj1);//Object
+		
+		//obj obj1 内容一模一样  但是 地址不同 所以是两个个体
+	</script>
+</html>

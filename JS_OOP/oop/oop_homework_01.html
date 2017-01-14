@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>通讯录</title>
+		<style type="text/css">
+			.list {
+				margin: 30px auto;
+				width: 300px;
+				border: 1px solid black;
+			}
+			
+			.list>div {
+				width: 100%;
+				height: 40px;
+				font: normal 15px/20px "微软雅黑";
+				border-bottom: 1px solid black;
+				padding: 5px 0;
+			}
+			
+			.button {
+				width: 157px;
+				margin: 10px auto;
+			}
+			
+			.menu {
+				width: 205px;
+				margin: 10px auto;
+			}
+			
+			
+		</style>
+	</head>
+
+	<body>
+		<div class="list">
+			<!--<div>
+				姓名：<br />
+				电话：
+			</div>
+			<div>
+				姓名：<br />
+				电话：
+			</div>-->
+		</div>
+		<div class="button">
+			<button id="add">增加联系人</button>
+			<button id="select">查找联系人</button>
+		</div>
+
+		<div class="menu">
+			<button id="delete">删除联系人信息</button>
+			<button id="change">修改联系人信息</button>
+		</div>
+	</body>
+	<script type="text/javascript">
+		//框架：① 存放联系人名单的地方 ② 添加联系人，查找联系人 ③ 删除联系人，修改联系人
+		//① 联系人动态创建
+		//② 点击添加联系人 查找联系人 出现新的页面 以供填写相关信息
+		//③ 因为 联系人的个数是动态不确定的 所以不可能每一个联系人写一个删除 修改 共有一个
+
+		var list = document.getElementsByClassName("list")[0];
+		var addBtn = document.getElementById("add");
+		var selectBtn = document.getElementById("select");
+		var deleteBtn = document.getElementById("delete");
+		var changeBtn = document.getElementById("change");
+		// 创建构造函数
+		var index = 0;
+
+		function User(name, phone) {
+			this.name = name;
+			this.phone = phone;
+			//给每个联系人设置索引值
+			this.index = index;
+			this.infoDiv = document.createElement("div");
+			this.infoDiv.innerHTML = "姓名：" + this.name + "<br/>电话：" + this.phone;
+			index++;
+		}
+
+		//方法写在原型上
+		//添加练习人
+		var userArr = [];
+		User.prototype.add = function() {
+				//① 添加的数据要有记录 即要有存储的地方 相当于后台数据库
+				userArr.push(this);
+				//console.log(this);
+				//console.log(userArr)
+				//② 显示在页面上
+				list.appendChild(this.infoDiv);
+			}
+			//添加联系人按钮
+		add.onclick = function() {
+			var name = prompt("请输入新增联系人的姓名");
+			var phone = prompt("请输入新增联系人的电话");
+			var user = new User(name, phone);
+			user.add();
+		}
+
+		//查找联系人按钮
+		selectBtn.onclick = function() {
+			//User.prototype.select = function(){
+			var name = prompt("请输入要查找联系人的姓名");
+			var num = 0;
+			for(var i = 0; i < userArr.length; i++) {
+				if(userArr[i].name == name) {
+					alert("姓名：" + userArr[i].name + "\n电话：" + userArr[i].phone);
+				} else {
+					num++;
+				}
+			}
+			if(num == userArr.length) {
+				alert("抱歉，没有该联系人");
+			}
+			//}
+		}
+
+		//删除联系人
+		User.prototype.Delete = function() {
+			var num = 0;
+			for(var i = 0; i < userArr.length; i++) {
+				if(userArr[i].name == this .name) {
+					userArr.splice(i,1);
+					var divs = list.children;
+					//console.log(divs[i]);
+					list.removeChild(divs[i]);
+					userArr[i].index--;
+				} else {
+					num++;
+				}
+			}
+			if (num == userArr.length) {
+				alert("抱歉，没有该联系人");
+			}
+		}
+
+		deleteBtn.onclick = function() {
+			var name = prompt("请输入要删除联系人姓名");
+			var phone = prompt("请输入要删除联系人电话");
+			var user = new User(name, phone);
+			user.Delete();
+		}
+
+		//修改联系人信息
+		User.prototype.change = function() {
+			var num = 0;
+			for(var i = 0; i < userArr.length; i++) {
+				if(userArr[i].name == this.name && userArr[i].phone == this.phone) {
+					var newName = prompt("请输入新的姓名");
+					var newPhone = prompt("请输入新的电话");
+					var divs = list.children;
+					divs[i].innerHTML = "姓名：" + newName + "<br/>电话：" + newPhone;
+					userArr[i].name = newName;
+					userArr[i].phone = newPhone;
+				} else {
+					num++;
+				}
+			}
+			if (num == userArr.length) {
+				alert("抱歉，没有该联系人");
+			}
+		}
+
+		changeBtn.onclick = function() {
+			var name = prompt("请输入要修改联系人的姓名");
+			var phone = prompt("请输入要修改联系人的电话");
+			var user = new User(name, phone);
+			user.change();
+		}
+
+
+		//利用构造函数 new 一个对象
+		var user1 = new User("cx1", "11111111111");
+		user1.add();
+		var user2 = new User("cx2", "22222222222");
+		user2.add();
+	</script>
+
+</html>

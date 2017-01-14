@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>碰撞的小球</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			
+			canvas {
+				box-shadow: 0 0 2px gray;
+			}
+		</style>
+	</head>
+
+	<body>
+		<canvas id="myCanvas" width="600" height="600"></canvas>
+
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+
+		function Rect(x, y, w, h, color) {
+			this.x = x;
+			this.y = y;
+			this.w = w;
+			this.h = h;
+			this.color = color;
+			this.speedX = 3;
+			this.speedY = 7;
+			this.update = false;
+		}
+
+		Rect.prototype.draw = function() {
+			context.beginPath();
+			context.rect(this.x, this.y, this.w, this.h);
+			context.fillStyle = this.color;
+			context.fill();
+		}
+
+		Rect.prototype.move = function() {
+			//检测碰壁反弹
+			if(this.x + this.w >= canvas.width || this.x <= 0) {
+				this.speedX = this.speedX * (-1);
+			}
+			if(this.y + this.h >= canvas.height || this.y <= 0) {
+				this.speedY = this.speedY * (-1);
+			}
+			this.x += this.speedX;
+			this.y += this.speedY;
+			this.update = false;
+		}
+
+		var rect1 = new Rect(10, 10, 50, 50, "red");
+		var rect2 = new Rect(70, 70, 50, 50, "blue");
+		var rect3 = new Rect(130, 130, 50, 50, "yellow");
+		var rect4 = new Rect(190, 190, 50, 50, "cyan");
+		var rect5 = new Rect(250, 250, 50, 50, "orange");
+		var rect6 = new Rect(310, 310, 50, 50, "purple");
+		var arr = [rect1, rect2, rect3, rect4, rect5, rect6];
+
+		function ani() {
+			context.clearRect(0, 0, canvas.width, canvas.height)
+			for(var i = 0; i < arr.length; i++) {
+				arr[i].move();
+				arr[i].draw();
+			}
+			//rect1.move();
+			//判断是否碰壁
+			//rect1.draw();
+			//rect2.move();
+			//判断是否碰壁
+			//rect2.draw();
+			
+			//矩形之间的碰撞
+			for (var j = 0; j < arr.length; j++) {
+				for(var k = 0; k < arr.length; k++){
+					//要进行比较的元素 arr[j]  
+					//arr[j] 要进行比较的数组元素arr[k]
+					if(j != k){
+						if (peng(arr[j],arr[k])) {
+							
+							if(arr[j].update == false){
+								arr[j].speedX *= -1;
+								arr[j].speedY *= -1;
+								arr[j].update = true;
+							}
+							if(arr[k].update == false){
+								arr[k].speedX *= -1;
+								arr[k].speedY *= -1;
+								arr[k].update = true;
+							}
+						}
+					}
+				}
+			}
+			window.requestAnimationFrame(ani)
+		}
+
+		ani();
+
+		function peng(r1, b1) {
+			
+			//碰撞的条件
+			//r1.x < b1.x+b1.w
+			//b1.x < r1.x + r1.w
+			//r1.y < b1.y+b1.h
+			//b1.y < r1.y + r1.h
+			var r1l = r1.x + r1.w;
+			var r1h = r1.y + r1.h;
+			var b1l = b1.x + b1.w;
+			var b1h = b1.y + b1.h;
+			if(r1.x <= b1l && b1.x <= r1l && b1.y <= r1h && r1.y <= b1h) {
+				//alert("zhuangle");
+				return true;	
+			}
+			return false;
+		}
+	</script>
+
+</html>

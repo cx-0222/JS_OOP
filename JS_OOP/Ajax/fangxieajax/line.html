@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>canvas划线</title>
+		<style type="text/css">
+			#myCanvas {
+				border: 1px solid red;
+			}
+		</style>
+	</head>
+
+	<body>
+		<canvas id="myCanvas" width="600" height="600"></canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+
+		function Line(start, end, xspeed, yspeed) {
+			//起点x y 坐标
+			this.startx = start.x;
+			this.starty = start.y;
+			//终点x y 坐标
+			this.endx = end.x;
+			this.endy = end.y;
+			//运动过程的x y 坐标 刚开始为起点坐标
+			this.x = start.x;
+			this.y = start.y;
+			//x y 方向的速度
+			this.xspeed = xspeed;
+			this.yspeed = yspeed;
+
+			this.drawOver = false;
+		}
+
+		Line.prototype.draw = function() {
+			context.beginPath();
+			context.moveTo(this.startx, this.starty);
+			context.lineTo(this.x, this.y);
+			context.stroke();
+		}
+
+		Line.prototype.move = function() {
+			this.x += this.xspeed;
+			this.y += this.yspeed;
+			if(this.xspeed >= 0) {
+				if(this.x >= this.endx) {
+					this.drawOver = true;
+					this.x = this.endx;
+					this.y = this.endy;
+				}
+			} else {
+				if(this.x <= this.endx) {
+					this.x = this.endx;
+					this.y = this.endy;
+				}
+			}
+		}
+
+		var line1 = new Line({
+			x: 200,
+			y: 200
+		}, {
+			x: 300,
+			y: 300
+		}, 1, 1);
+
+		var line2 = new Line({
+			x: 300,
+			y: 300
+		}, {
+			x: 500,
+			y: 300
+		}, 1, 0);
+
+		function zhexian(arr) {
+			//[{x:,y:},{x:,y:},{x:,y:}]
+			var zhexianArr = [];
+			//console.log(arr);
+			for(var k = 0; k < arr.length; k++) {
+				//console.log(arr[k]);
+				var lineArr = [];
+				var speed = 5;
+				for(var i = 1; i < arr[k].length; i++) {
+					//console.log(arr[k][i].x);
+					var length = Math.sqrt(Math.pow((arr[k][i].x - arr[k][i - 1].x), 2) + Math.pow((arr[k][i].y - arr[k][i - 1].y), 2));
+					var time = length / speed;
+					var xspeed = (arr[k][i].x - arr[k][i - 1].x) / time;
+					var yspeed = (arr[k][i].y - arr[k][i - 1].y) / time;
+					var line = new Line(arr[k][i - 1], arr[k][i], xspeed, yspeed);
+					lineArr.push(line);
+				}
+				zhexianArr.push(lineArr);
+			}
+			
+			function ani() {
+				context.clearRect(0, 0, canvas.width, canvas.height);
+				//console.log(zhexianArr);
+				for(var n = 0; n < zhexianArr.length; n++) {
+					for(var j = 0; j < zhexianArr[n].length; j++) {
+						if(j > 0 && zhexianArr[n][j - 1].drawOver == false) {
+							continue;
+						}
+						zhexianArr[n][j].draw();
+						zhexianArr[n][j].move();
+					}
+				}
+				window.requestAnimationFrame(ani);
+			}
+			ani();
+		}
+		zhexian([[{
+			x: 100,
+			y: 100
+		}, {
+			x: 300,
+			y: 100
+		}, {
+			x: 200,
+			y: 300
+		}],[{
+			x: 200,
+			y: 200
+		}, {
+			x: 400,
+			y: 200
+		}, {
+			x: 300,
+			y: 400
+		}]]);
+
+	</script>
+
+</html>

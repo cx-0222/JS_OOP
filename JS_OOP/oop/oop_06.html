@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>构造函数的继承</title>
+	</head>
+	<body>
+	</body>
+	<script type="text/javascript">
+		function Person(name,age){
+			this.name = name;
+			this.age = age;
+			this.say = function(){
+				alert("hello");
+			}
+		}
+		
+		Person.prototype.ppp = function(){
+			console.log("我是原型")
+		}
+		
+		
+		function Tracher(name,age,sex){
+			//arguments 参数列表
+			Person.apply(this,arguments);
+			console.log(arguments);//["cw", 24, "man"]
+			this.sex = sex;
+		}
+		var teacher = new Tracher("cw",24,"man");
+		console.log(teacher);
+		
+		
+		function Student(name,age,className){
+			Person.call(this,name,age);
+			//Person.apply(this,Arr);
+			this.className = className;
+		}
+		
+		
+		//原型的继承
+		Student.prototype = Person.prototype;//传址
+		Student.prototype.ppp = function(){
+			console.log("我是student");
+		}
+		
+		//父类对象再次调用的时候 无法调用改变之前的
+		var person = new Person("zy",88);
+		person.ppp();
+		
+		
+		console.log("==========");
+		var stu = new Student("cx",18,"160919");
+		//应经继承
+		console.log(stu);
+		//访问属性
+		//alert(stu.name);
+		//调用函数
+		//stu.say();
+		
+		
+		
+		// call apply 只能做构造函数的继承 无法实现原型的继承
+		stu.ppp();//报错 说明没有继承
+		
+	</script>
+</html>

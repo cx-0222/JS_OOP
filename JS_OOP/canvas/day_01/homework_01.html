@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>旋转太极</title>
+		<style type="text/css">
+			#myCanvas {
+				background-color: gainsboro;
+			}
+		</style>
+	</head>
+
+	<body>
+		<canvas id="myCanvas" width="400" height="400"></canvas>
+	</body>
+	<script type="text/javascript">
+		//获取canvas元素
+		var canvas = document.getElementById("myCanvas");
+		//获取画布
+		var context = canvas.getContext("2d");
+		var num = 1;
+		var deg = Math.PI / 180;
+		//1. translate(x,y) 偏移
+		//x	添加到水平坐标（x）上的值
+		//y	添加到垂直坐标（y）上的值
+
+		//① 平移画布到中心点(太极的中点)
+		context.translate(200, 200);
+		//② 开计时器 无限画太极
+		setInterval(function() {
+			//③ 每次画太极之前 保存上一次的属性
+			context.save();
+			//2. clearRect() 方法清空给定矩形内的指定像素。
+				//x	要清除的矩形左上角的 x 坐标
+				//y 要清除的矩形左上角的 y 坐标
+				//width	要清除的矩形的宽度，以像素计
+				//height	要清除的矩形的高度，以像素计
+			//④ 每次画太极之前 擦除前一次图
+			context.clearRect(0, 0, canvas.width, canvas.height);
+			//⑤ 每次逆时针旋转1°
+			num++;
+			context.rotate(-num * deg);
+			//⑥ 恢复画布位置 保证太极位置不变
+			context.translate(-200, -200);
+
+			//⑦ 画太极
+			//大圆
+			context.beginPath()
+			context.arc(200, 200, 200, 0, 360 * deg, true);
+			context.fillStyle = "white"
+			context.fill();
+			//上半圆
+			context.beginPath()
+			context.arc(200, 200, 200, 0, 180 * deg, true);
+			context.fillStyle = "black"
+			context.fill();
+			//左中圆
+			context.beginPath()
+			context.arc(100,200, 100, 0, 360 * deg, true);
+			context.fillStyle = "white"
+			context.fill();
+			//右中圆
+			context.beginPath()
+			context.arc(300, 200, 100, 0, 360 * deg, true);
+			context.fillStyle = "black"
+			context.fill();
+			//左小圆
+			context.beginPath()
+			context.arc(100,200, 20, 0, 360 * deg, true);
+			context.fillStyle = "black"
+			context.fill();
+			//右小圆
+			context.beginPath()
+			context.arc(300, 200, 20, 0, 360 * deg, true);
+			context.fillStyle = "white"
+			context.fill();
+			//⑧ 读取保存的属性
+			context.restore();
+		}, 30);
+	</script>
+
+</html>

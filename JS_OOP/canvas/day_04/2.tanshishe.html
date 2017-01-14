@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>贪食蛇</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			
+			#myCanvas {
+				box-shadow: 0 0 2px red;
+			}
+		</style>
+	</head>
+
+	<body>
+		<canvas id="myCanvas" width="600" height="600"></canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+
+		//矩形的构造函数
+		function Rect(x, y, w, h, color) {
+			this.x = x;
+			this.y = y;
+			this.w = w;
+			this.h = h;
+			this.color = color;
+		}
+		Rect.prototype.draw = function() {
+			context.beginPath();
+			context.rect(this.x, this.y, this.w, this.h);
+			context.fillStyle = this.color;
+			context.fill();
+			context.stroke();
+		}
+		Rect.prototype.move = function() {
+			switch(snake.fangxiang) {
+				case 37:
+					this.x -= this.w; //往左走
+					break;
+
+				case 38:
+					this.y -= this.h; //往上走
+					break;
+
+				case 39:
+					this.x += this.w; //往右走;
+					break;
+
+				case 40:
+					this.y += this.h; //往下走
+					break;
+			}
+		}
+
+		//var rect1 = new Rect(400,300,20,20,"red");
+		function createFood() {
+			var flag = true;
+			while(flag) {
+				var x = rand(11, 0);
+				var y = rand(11, 0);
+				for(var i = 0; i < snake.bodyArr.length; i++) {
+					if(snake.bodyArr[i].x == x * 50 && snake.bodyArr[i].y == y * 50) {
+						flag = true;
+						break;
+					} else {
+						flag = false;
+					}
+				}
+			}
+			var food = new Rect(x * 50, y * 50, 50, 50, "gray");
+			return food;
+		}
+
+		function rand(max, min) {
+			return parseInt(Math.random() * (max - min + 1) + min);
+		}
+
+		function Snake() {
+			//给帧动画添加锁 防止动画在关闭后 又因为调用 再次打开了
+			this.ani = true;
+			this.update = false;
+			//初始方向
+			this.fangxiang = 37;
+			this.bodyArr = []; //蛇身体
+			for(var i = 0; i < 4; i++) {
+				var rect1 = new Rect(400 + i * 50, 300, 50, 50, "red");
+				this.bodyArr.push(rect1);
+			}
+			this.bodyArr[0].color = "black";
+
+		}
+		Snake.prototype.move = function() {
+			this.update = false;
+			//创建新的头 代替原来的头
+			var rects = new Rect(this.bodyArr[0].x, this.bodyArr[0].y, this.bodyArr[0].w, this.bodyArr[0].h, "red");
+			this.bodyArr.splice(1, 0, rects);
+
+			if(food.x == this.bodyArr[0].x && food.y == this.bodyArr[0].y) {
+				food = createFood();
+			} else {
+				this.bodyArr.pop();
+			}
+			
+			this.bodyArr[0].move();	
+			
+			//放在this.bodyArr[0].move()之后  否则在头的位置有两个矩形 会影响下面的判断
+			//判断是否吃到自己的身体
+			//i从1开始 否则头与头相比 一定会相等的
+			for(var i = 1; i < this.bodyArr.length; i++) {
+				if(this.bodyArr[0].x == this.bodyArr[i].x && this.bodyArr[0].y == this.bodyArr[i].y) {
+					//console.log(111);
+					//当撞上身体的时候 上锁 并关闭动画
+					this.ani = false;
+					window.cancelAnimationFrame(init);
+				}
+			}
+		}
+
+		var snake = new Snake();
+		var food = createFood();
+
+		var timer = 0;
+		var init;
+		function ani() {
+			timer++;
+			if(timer % 15 == 0) {
+				context.clearRect(0, 0, canvas.width, canvas.height);
+				//rect1.draw();
+				//rect1.move();
+				snake.move();
+				for(var i = 0; i < snake.bodyArr.length; i++) {
+					snake.bodyArr[i].draw();
+				}
+				food.draw();
+			}
+			if(snake.ani){
+				//为真即开动画 
+				init = window.requestAnimationFrame(ani);
+			}
+		}
+
+		ani();
+
+		document.onkeydown = function(e) {
+			var ev = e || window.event;
+			if(snake.update == false) {
+				switch(ev.keyCode) {
+					case 37:
+						if(snake.fangxiang != 39) {
+							snake.fangxiang = 37;
+							snake.update = true;
+						}
+						break;
+					case 38:
+						if(snake.fangxiang != 40) {
+							snake.fangxiang = 38;
+							snake.update = true;
+						}
+						break;
+					case 39:
+						if(snake.fangxiang != 37) {
+							snake.fangxiang = 39;
+							snake.update = true;
+						}
+						break;
+					case 40:
+						if(snake.fangxiang != 38) {
+							snake.fangxiang = 40;
+							snake.update = true;
+						}
+						break;
+				}
+			}
+		}
+	</script>
+
+</html>

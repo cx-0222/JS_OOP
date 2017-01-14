@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>白天知识点复习~房产证</title>
+		<style type="text/css">
+			#myCanvas {
+				box-shadow: 0 0 2px red;
+				position: absolute;
+			}
+			#user {
+				position: absolute;
+				left: 177px;
+				top: 121px;
+				z-index: 10;
+			}
+			#time {
+				position: absolute;
+				left: 177px;
+				top: 209px;
+				z-index: 10;
+			}
+			#btn {
+				position: absolute;
+				left: 560px;
+				top:400px ;
+				outline: none;
+			}
+			#Dload {
+				text-decoration: none;
+				color: black;
+				border: 1px solid #BABABA;
+				border-radius:3px ;
+				font-size: 13px;
+				position: absolute;
+				top: 403px;
+				left: 640px;
+			}
+		</style>
+	</head>
+	<body>
+		<input type="text" id="user"/>
+		<input type="text" id="time"/>
+		<canvas id="myCanvas" width="549" height="412"></canvas>
+		<button id="btn">生成房产证</button>
+		<a id="Dload" href="">下载</a>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+		var btn = document.getElementById("btn");
+		var user = document.getElementById("user");
+		var time = document.getElementById("time");
+		var Dload = document.getElementById("Dload");
+		
+		var img = new Image();
+		img.src = "1.jpg";
+		img.onload = function(){
+			//1.将图片载入画布
+			context.drawImage(img,0,0);
+		}
+		
+		//2.将由input输入的名字和日期绘制到canvas上
+		function draw(){
+			var name = user.value;
+			var times = time.value;
+			context.font = "normal 12px arial" 
+			context.strokeStyle = "#7C736C";
+			context.strokeText(name,user.offsetLeft,user.offsetTop);
+			//context.stroke();
+			context.strokeText(times,time.offsetLeft,time.offsetTop);
+			context.stroke();
+			
+		}
+		//3.点击生成的时候 一方面调用绘制函数 一方面将绘制后的canvas内容变为链接
+			//并将此链接赋值给a 的href
+			
+		btn.onclick = function(){
+			canvas.style.zIndex = 99;
+			draw();
+			var url = canvas.toDataURL();
+			Dload.href = url;
+			Dload.download = "";
+		}
+		
+		
+	</script>
+</html>

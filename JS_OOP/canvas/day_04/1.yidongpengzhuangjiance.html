@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>移动矩形碰撞检测</title>
+		<style type="text/css">
+			#myCanvas {
+				box-shadow: 0 0 2px red;
+			}
+		</style>
+	</head>
+
+	<body>
+		<canvas id="myCanvas" width="600" height="600"></canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+
+		function Rect(x, y, w, h, color) {
+			this.x = x;
+			this.y = y;
+			this.w = w;
+			this.h = h;
+			this.color = color;
+		}
+		Rect.prototype.draw = function() {
+			//没参数时正常绘制 
+			context.beginPath();
+			context.rect(this.x, this.y, this.w, this.h);
+			context.fillStyle = this.color;
+			context.fill();
+			//有参数的时候 根据参数的个数来判断点击的是哪个矩形
+			if(arguments.length == 2) {
+				//判断我们点击的点是否在某个范围内
+				//但是它是判断点是否在最后一个闭合路径内
+				if(context.isPointInPath(arguments[0], arguments[1])) {
+					return true;
+				}	
+			}
+			return false;
+		}
+		
+		var rect1 = new Rect(100, 100, 50, 50, "blue");
+		var rect2 = new Rect(200, 200, 50, 50, "red");
+		var arr = [rect1, rect2];
+		//初始绘制
+		for(var i = 0; i < arr.length; i++) {
+			arr[i].draw();
+		}
+		
+		canvas.onmousedown = function(e) {
+			var ev = e || window.event;
+			var x = ev.clientX - canvas.offsetLeft;
+			var y = ev.clientY - canvas.offsetTop;
+			for(var i = 0; i < arr.length; i++) {
+				if(arr[i].draw(x, y)) {
+					//获取我们鼠标点击的时到底点在了我们矩形的什么位置
+					var disX = x - arr[i].x;
+					var disY = y - arr[i].y;
+					//闭包 匿名函数的自执行
+					//闭包要传得参数 i disX disY 
+					(function(i, disX, disY) {
+						document.onmousemove = function(e) {
+							var ev = e || window.event;
+							var x = ev.clientX - disX - canvas.offsetLeft;
+							var y = ev.clientY - disY - canvas.offsetTop;
+							arr[i].x = x;
+							arr[i].y = y;
+							context.clearRect(0,0,canvas.width,canvas.height);
+							for(var j = 0; j < arr.length; j++){
+								arr[j].draw();
+							}
+							
+							console.log("碰上没"+ peng(arr[0],arr[1]));
+						}
+					})(i, disX, disY);
+
+					document.onmouseup = function() {
+						document.onmousemove = null;
+					}
+				}
+			}
+		}
+		
+		function peng(r1,b1){
+			//碰撞的条件
+			//r1.x < b1.x+b1.w
+			//b1.x < r1.x + r1.w
+			//r1.y < b1.y+b1.h
+			//b1.y < r1.y + r1.h
+			
+			var r1l = r1.x + r1.w;
+			var r1h = r1.y + r1.h;
+			var b1l = b1.x + b1.w;
+			var b1h = b1.y + b1.h;
+			if(r1.x <= b1l && b1.x <= r1l && b1.y <= r1h && r1.y <= b1h){
+				return true;
+			}
+			return false;
+		}
+		
+			//if(context.isPointInPath(x, y)) {
+			//获取我们鼠标点击的时到底点在了我们矩形的什么位置
+			//但是它是判断点是否在最后一个闭合路径内
+			//var disX = x - rect1.x;
+			//var disY = y - rect1.y;
+			//document.onmousemove = function(e) {
+			//var ev = e || window.event;
+			//var x = ev.clientX - canvas.offsetLeft;
+			//var y = ev.clientY - canvas.offsetTop;
+			//rect1.x = x - disX;
+			//rect1.y = y - disY;
+			//rect2.x = x - disX;
+			//rect2.y = y - disY;
+			//context.clearRect(0, 0, canvas.width, canvas.height);
+			//rect1.draw();
+			//rect2.draw();
+			//}
+			//}
+			//document.onmouseup = function() {
+			//document.onmousemove = "";
+			//}
+		//}
+	</script>
+
+</html>

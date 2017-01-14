@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>复习 仿写JQ</title>
+	</head>
+
+	<body>
+		<div class="outer" id="div">
+			<div class="center">
+				<div id="inner"></div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript">
+		//选择器的仿写
+		//"  div  div"
+		function selectEl(arg) {
+			//刨去空格 获取条件节点数组
+			var reg = /[^\s]+/g;
+			var elArr = arg.match(reg);
+			console.log(elArr); //["#div", "div"]
+
+			var parentArr = [document];
+			//第一层 条件 即要找的标签的tagname是什么
+			for(var i = 0; i < elArr.length; i++) {
+				var childArr = [];
+				for(var j = 0; j < parentArr.length; j++) {
+					//多种选择器时
+					//① 判断是什么选择器
+					//var reg = /^#/;
+					//console.log(elArr[i]);//string  #div
+					//test(string)用于检测一个字符串是否匹配某个模式
+					//string	必需。要检测的字符串。
+					//console.log(reg.test(elArr[i]));//true
+					if(/^#/.test(elArr[i])) {
+						//id 选择器
+						//elArr[i] 是带有# 的字符串 而 byId选择器不用填#
+						//① 刨除第一位的#
+						//substring(start，stop) 字符串的截取 
+						//start 表示从哪一位开始 必填
+						//stop 不写表示截取至最后一位 填了表示截取到stop前一位(即不包括stop位)
+						var ids = elArr[i].substring(1);
+						//id 一个document中只有一个 所以不用parentArr 也不用第三层循环
+						var el = document.getElementById(ids);
+						if(childArr.indexOf(el) == -1) {
+							childArr.push(el);
+						}
+					} else if(/^\./.test(elArr[i])) {
+						var cals = elArr[i].substring(1);
+						//由于getElementsByClassName()方法 低版本IE 没有 所以要做兼容
+						//var resultArr = parentArr[j].getElementsByClassName(cals);
+						var resultArr = findClass(parentArr[j], cals);
+						for(var k = 0; k < resultArr.length; k++) {
+							if(childArr.indexOf(resultArr[k] == -1)) {
+								childArr.push(resultArr[k]);
+								//console.log(childArr);
+							}
+						}
+					} else {
+						//第一次总是 由document. 开始 
+						//所以 parentArr的第一个值为document
+						var resultArr = parentArr[j].getElementsByTagName(elArr[i]);
+						//console.log(resultArr);
+						for(var k = 0; k < resultArr.length; k++) {
+							if(childArr.indexOf(resultArr[k] == -1)) {
+								childArr.push(resultArr[k]);
+								//console.log(childArr);
+							}
+						}
+					}
+				}
+				parentArr = childArr;
+			}
+			return parentArr;
+		}
+
+		function findClass(obj, className) {
+			var resultArr = [];
+			if(obj.getElementsByClassName) {
+				resultArr = obj.getElementsByClassName(className);
+			} else {
+				//没有
+				//① 取出该节点下面所有的子节点
+				var arrs = obj.getElementsByTagName("*");
+				//② 遍历数组arrs 看看有没有 class == className的
+				for(var i = 0; i < arrs.length; i++) {
+					//!!!坑坑坑 因为 class 可以是多个
+					//'ccc ppp' == 'ccc'???
+					//'ccccc ppp'=='ccc'???
+					//\b 匹配单词边界
+					var reg = new RegExp("\\b" + className + "\\b");
+					if(reg.test(arrs[i].className)) {
+						resultArr.push(arrs[i]);
+					}
+				}
+			}
+			return resultArr;
+		}
+
+		var arr = selectEl("  div .center div");
+		console.log(arr);
+	</script>
+
+</html>

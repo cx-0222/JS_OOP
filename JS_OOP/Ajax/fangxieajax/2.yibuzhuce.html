@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>异步注册</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			
+			.wrap {
+				width: 400px;
+				height: 400px;
+				margin: 200px auto;
+			}
+			
+			.content {
+				width: 400px;
+				height: 200px;
+				border: 1px solid black;
+				position: relative;
+			}
+			
+			.form {
+				text-align: center;
+				margin-top: 20px;
+				font-size: 13px;
+			}
+			
+			input {
+				display: block;
+				margin: 10px auto;
+				font-size: 16px;
+			}
+			
+			.btn {
+				display: inline;
+				/*margin-left: 10px;*/
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="wrap">
+			<div class="content">
+				<div class="form">
+					姓名：<input type="text" name="username" id="username" value="" /> 密码：
+					<input type="password" name="password" id="password" value="" />
+					<input type="submit" class="btn" value="注册" />
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="../day_01/JQuery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		var username = document.getElementById("username");
+		var passwords = document.getElementById("password");
+		var btn = document.getElementsByClassName("btn")[0];
+		//console.log(btn);
+		var name;
+		var pass;
+		username.onblur = function() {
+			$.ajax({
+				type: "get",
+				url: "2.yibuzhuce.php",
+				success: function(data) {
+					//console.log("成功");
+					//console.log(username.value);
+					//console.log(data);
+					var obj = JSON.parse(data);
+					for(var i = 0; i < obj.length; i++) {
+						//console.log(obj[i]);
+						if(username.value == obj[i].name) {
+							alert("用户已经存在");
+						} else {
+							name = username.value;
+						}
+					}
+
+				},
+				error: function(errors) {
+					console.log("失败");
+					console.log(errors);
+				}
+			});
+		}
+
+		passwords.onblur = function() {
+			$.ajax({
+				type: "get",
+				url: "2.yibuzhuce.php",
+				success: function(data) {
+					//console.log(data);
+					pass = passwords.value;
+				},
+				error: function(errors) {
+					console.log("失败");
+					console.log(errors);
+				}
+			});
+		}
+		
+		btn.onclick = function(){
+			//alert("111");
+			$.ajax({
+				type:"get",
+				url:"3.yibuzhuce.php",
+				data:{
+					username:name,
+					password:pass
+				},
+				success: function(data) {
+					alert(data);
+				},
+				error: function(errors) {
+					console.log("失败");
+					console.log(errors);
+				}
+			});
+			username.value = "";
+			passwords.value = "";
+		}
+	</script>
+
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>图形变换</title>
+	<style type="text/css">
+			#myCanvas {
+				border: 1px solid lightgray;
+				background-color: gainsboro;
+			}
+		</style>
+	</head>
+
+	<body>
+		<canvas id="myCanvas" width="500" height="500">
+			你的浏览器不支持canvas
+		</canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementsByTagName("canvas")[0];
+		canvas.width = 600;
+		canvas.height = 600;
+		var context = canvas.getContext("2d");
+		
+		//平移 是对画纸的平移 
+		context.fillStyle = "royalblue";
+		context.fillRect(0,0,150,150);
+		context.translate(150,150);
+		context.fillRect(0,0,150,150);
+		
+		//旋转 也是对画布的操作
+		context.rotate(0.25*Math.PI);
+		context.fillStyle = "red";
+		// 0 0 表示画布的原点 此时画布的位置清楚明了
+		//说明第一步的平移操作的就是画布
+		context.fillRect(0,0,150,150);
+		
+		//缩放
+		context.scale(2,2);
+		context.fillStyle = "blue";
+		context.fillRect(75,75,150,150);
+	</script>
+</html>

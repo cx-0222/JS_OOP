@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+	</body>
+	<script type="text/javascript">
+		
+		var json = {
+			"name":"anni",
+			"password":"我从来都不玩火"
+		}
+		var str = '{"name":"cx","age":18}';
+		//字符串转为对象  但此字符必须是json字符串
+		//json 字符串 ：① 用大括号 或 中括号括起来
+		//② key 必须用双引号包裹 value 如果是数值 可不用
+		var arrStr = '[{"name":"cx"},{"name":"zmy"},{"name":"ff"}]'
+		var obj = JSON.parse(arrStr);
+		//console.log(obj);
+		
+		
+		var str1 = '{"name":"lck","password":18,"list":[{"user":[{},{},{}]},{"user":[{},{},{}]},{"user":[{},{},{}]}]}'
+		var obj1 = JSON.parse(str1);
+		//console.log(obj1)
+		//将对象转为jsonzifuc
+		var ss = JSON.stringify(obj);
+		//console.log(ss);
+		
+		
+		
+		var obj = {
+			name:"cx",
+			password:123
+		}
+		
+		//console.log(obj.name);
+		//console.log(obj["name"]);
+		console.log(obj.name);//在外面可以用.来获取里面的值 但在for in里面不可以
+		
+		for(var keys in obj){
+			//console.log(keys);
+			//console.log(obj[keys]);
+			//console.log(obj.keys);//undefind 因为在for in 里面不可以 用.
+			//根据keys的个数 来确定循环多少次
+			console.log(keys +":"+obj[keys]);
+		}
+		
+		
+		
+		var arr = [1,2,3,4]
+		
+		for(var value in arr){
+			//console.log(arr[1])
+			console.log(value);
+		}
+	</script>
+</html>

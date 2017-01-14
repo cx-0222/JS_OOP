@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<body>
+		<canvas width="400" height="200" id="myCanvas" stylle="width:400px;height:200px;"></canvas>
+	</body>
+
+	<script type="text/javascript">
+		var canvas = document.getElementById('myCanvas');
+		var ctx = canvas.getContext('2d');
+		var angle = 0;
+
+		setInterval(shuaxin, 30);
+
+		function shuaxin() {
+			//清空画布
+			ctx.fillStyle = '#ffffff';
+			ctx.fillRect(0, 0, 400, 200);
+
+			angle += 0.1;
+			if(angle > 2 * Math.PI) {
+				angle -= 2 * Math.PI;
+			}
+			ctx.save();
+			ctx.strokeStyle = "#000000";
+			ctx.beginPath();
+			ctx.moveTo(0, 0);
+			ctx.lineTo(0, 200);
+			ctx.moveTo(0, 100);
+			ctx.lineTo(400, 100);
+			ctx.stroke();
+			ctx.beginPath();
+
+			for(var i = 0; i < 400; i++) {
+				var y0 = 100 + 80 * Math.sin(angle + i * 2 * Math.PI / 200);
+				if(i == 0) {
+					ctx.moveTo(i, y0);
+				}
+				ctx.lineTo(i, y0);
+			}
+			ctx.stroke();
+			ctx.restore();
+		}
+	</script>
+
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>白天知识点复习~贪食蛇</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			
+			#myCanvas {
+				box-shadow: 0 0 2px red;
+			}
+		</style>
+	</head>
+
+	<body>
+		<canvas id="myCanvas" width="600" height="600"></canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+
+		//蛇的构造函数
+		function Snake() {
+			//给snake 添加锁 防止在按键太快的时候 出现往身体里运行的情况
+			this.update = false;
+			//设置蛇运动的初始方向 向左
+			this.fangxiang = 37;
+			// 蛇身体 由一个个小矩形构成的 每个矩形看做一个对象 存放在bodyArr中
+			this.bodyArr = [];
+			for(var i = 0; i < 4; i++) {
+				// 创建矩形的构造函数
+				var rect1 = new Rect(400 + i * 20, 300, 20, 20, "red");
+				this.bodyArr.push(rect1);
+			}
+			this.bodyArr[0].color = "black";
+		}
+
+		var snake = new Snake();
+		var food = createFood();
+
+		Snake.prototype.move = function() {
+				this.update = false;
+				//实现蛇头动 在原蛇头位置处填补一个矩形做身体 并删除最后一个保证长度不变
+				var rects = new Rect(this.bodyArr[0].x, this.bodyArr[0].y, this.bodyArr[0].w, this.bodyArr[0].h, "red");
+				//插入到元蛇头位置
+				this.bodyArr.splice(1, 0, rects);
+				
+
+				//吃食物 即当蛇头与食物碰撞的时候 创造新的食物(原来的会被擦除？)
+				//同时最后一个不删 看上去就是蛇长了
+				if(food.x == this.bodyArr[0].x && food.y == this.bodyArr[0].y){
+					food = createFood();
+				}else{
+					//没有吃到食物
+					//删除最后一个
+					this.bodyArr.pop();
+				}
+				
+				//蛇头调用move
+				this.bodyArr[0].move();
+			
+			}
+		
+		//创建矩形的构造函数
+		function Rect(x, y, w, h, color) {
+			this.x = x;
+			this.y = y;
+			this.w = w;
+			this.h = h;
+			this.color = color;
+		}
+		// 矩形的绘制函数
+		Rect.prototype.draw = function() {
+				context.beginPath();
+				context.rect(this.x, this.y, this.w, this.h);
+				context.fillStyle = this.color;
+				context.fill();
+				context.stroke();
+			}
+			//矩形的移动
+		Rect.prototype.move = function() {
+			switch(snake.fangxiang) {
+				case 37:
+					this.x -= this.w; //往左
+					break;
+				case 38:
+					this.y -= this.h; //往上
+					break;
+				case 39:
+					this.x += this.w; //往右
+					break;
+				case 40:
+					this.y += this.h; //往下
+					break;
+			}
+		}
+
+		//var rect1 = new Rect(400,300,20,20,"black");
+		
+		//创造食物 是随机位置
+		function createFood(){
+			//① 遍历所有位置 一行 600/20 = 30个 一列 30个 
+			//这里循环变量的范围不好求 所以可以采用while循环
+			//进行无限循环 将循环变量设置在循环体内
+			var flag = true;
+			while(flag){
+				//食物出现的位置
+				var x = rand(29,0);//一行30个
+				var y = rand(29,0);
+				//② 食物不可以出现在蛇身上 所以 对蛇身体进行遍历并判断与食物的位置关系
+				for (var i = 0; i < snake.bodyArr.length; i++) {
+					if (snake.bodyArr[i].x == x*20 && snake.bodyArr[i].y == y*20) {
+						//在蛇身上
+						flag = true;//继续进行while循环
+						break;//但是跳出for循环 重新随机食物的位置
+					} else{
+						//不在蛇身上
+						flag = false;//跳出while循环
+					}
+				}
+			}
+			//找到满足条件x，y后 创建食物
+			var food = new Rect(x*20,y*20,20,20,"gray");
+			//返回食物对象 在蛇出现的时候出现食物 帧动画!!!
+			return food;
+			
+		}
+		
+		function rand(max,min){
+			return parseInt(Math.random()*(max - min + 1) + min);
+		}
+		
+		
+		//设置帧动画
+		var timer = 0;
+		function ani() {
+			timer++;
+			if(timer % 10 == 0) {
+				//满足条件才动 动了才重绘！！！！
+				context.clearRect(0, 0, canvas.width, canvas.height);
+				//rect1.move();
+				//rect1.draw();
+				snake.move();
+				for(var i = 0; i < snake.bodyArr.length; i++) {
+					//这里的 move 是蛇头动 而不是整个身体
+					//所以 给Snake添加一个move方法 
+					snake.bodyArr[i].draw();
+				}
+				food.draw();
+			}
+			window.requestAnimationFrame(ani);
+		}
+		ani();
+
+		//链接键盘 用上下左右键控制蛇运动
+		document.onkeydown = function(e) {
+			var ev = e || window.event;
+			if(snake.update == false) {
+				switch(ev.keyCode) {
+					//当蛇向左运动时，不可以在向右运动
+					//所以要进行判断
+					case 37:
+						if(snake.fangxiang != 39) { //不是向右运动才可以向左运动
+							snake.fangxiang = 37;
+							//上锁 直到蛇在这个方向运动了 才解开锁 不然不可以继续进switch
+							//也就是不可以往别的方向运行
+							snake.update = true;
+						}
+						break; //break 必须放在外面 否则 添加不满足的时候 会执行下一个case
+					case 38:
+						if(snake.fangxiang != 40) {
+							snake.fangxiang = 38;
+							snake.update = true;
+						}
+						break;
+					case 39:
+						if(snake.fangxiang != 37) {
+							snake.fangxiang = 39;
+							snake.update = true;
+						}
+						break;
+					case 40:
+						if(snake.fangxiang != 38) {
+							snake.fangxiang = 40;
+							snake.update = true;
+						}
+						break;
+				}
+			}
+		}
+	</script>
+
+</html>

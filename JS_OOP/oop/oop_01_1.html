@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>工厂模式</title>
+	</head>
+	<body>
+	</body>
+	<script type="text/javascript">
+		function Dog(name,age){
+			var obj = {};
+			obj.name = name;
+			obj.age = age;
+			
+			obj.showName = function(){
+				console.log("hai i am "+ obj.name);
+			}
+			return obj;
+		}
+		
+		var CoCo = Dog("CoCo",2);
+		CoCo.showName();
+		console.log(CoCo);
+		var diudiu = Dog("diudiu",3);
+		console.log(diudiu);
+		
+		
+		
+	</script>
+</html>

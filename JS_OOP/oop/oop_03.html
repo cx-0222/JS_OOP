@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>构造函数的原型</title>
+	</head>
+	<body>
+	</body>
+	<script type="text/javascript">
+		function Dog(){
+			
+		}
+		
+		//追加操作不可以写在原型操作之前
+		
+		//Dog.prototype.sex = "man";
+		//Dog.prototype.talk = function(){
+			//console.log("hahhah");
+		//}
+		
+		
+		//对原型进行操作
+		Dog.prototype = {
+			name:"coco",
+			age:18,
+			say:function(){
+				console.log("wanwanwan")
+			}
+		}
+		//原型追加操作 不可以写在原型操作之前 会被原型操作覆盖
+		Dog.prototype.sex = "man";
+		
+		//这种形式成为追加 如果再对原型的操作中既需要使用追加形式，又需要使用覆盖形式
+		//一定要将追加的形式写在覆盖的形式之后，否则就会造成之前写的追加的内容被替换，
+		//无法使用
+		Dog.prototype.talk = function(){
+			console.log("hahhah");
+		}
+		
+		var dog1 = new Dog();
+		console.log(dog1.sex);
+		dog1.say();
+		dog1.talk();
+		
+		
+		
+		
+		//属性一般写在构造函数中 可以动态设置 
+		function Student(name,age){
+			this.name = name;
+			this.age = age;
+		}
+		Student.prototype.say = function(){
+			console.log("hi");
+		}
+		
+		Student.prototype.info = function(){
+			console.log("我叫"+this.name+"，我今年"+this.age+"岁了");
+		}
+		var stu1 = new Student("cx",18);
+		stu1.say();
+		stu1.info();
+	</script>
+</html>

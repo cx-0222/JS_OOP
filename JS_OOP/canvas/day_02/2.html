@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>时钟 思路讲解</title>
+	<style type="text/css">
+			#myCanvas {
+				background-color: gainsboro;
+			}
+		</style>
+	</head>
+
+	<body>
+		<canvas id="myCanvas" width="600" height="600"></canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+		var deg = Math.PI / 180;
+		//将时钟看做一个对象
+		//1. 创建时钟的构造函数
+		function Clock(x,y,r,color){
+			this.x = x;
+			this.y = y;
+			this.r = r;
+			this.color = color;
+			this.hours ;
+			this.minues ;
+			this.second ;
+		}
+		
+		Clock.prototype.draw = function(){
+			//绘制表盘
+			context.beginPath();
+			context.arc(this.x,this.y,this.r,0,360*deg);
+			
+			//在这之前没有对画布进行任何的偏移 旋转 等操作
+			//保存此时的画布状态 在本方法执行完后restore()相当于初始画布
+			context.save();
+			
+			context.fillStyle = this.color;
+			context.fill();
+			
+			//绘制刻度
+			//1. 将画布移到中心点
+			context.translate(300,300);
+			context.fillStyle = "#DEB887";
+			for (var i = 0; i < 60; i++) {
+				context.save();
+				context.rotate(6*i*deg);
+				if (i % 5 == 0) {
+					//大刻度
+					context.fillRect(160,-6,30,6);
+				}else{
+					context.fillStyle = "olive"
+					context.fillRect(160,-5,20,6);
+				}
+				//context.save();
+				//每次转6度
+				//context.rotate(6*deg*i);
+				//context.rotate(6*deg);
+				//context.fillRect(160,-5,30,6);
+				context.restore();
+			}
+			context.restore();
+			//context.fillRect(160,-5,30,10);
+		}
+		
+		//绘制时针 分针 秒针
+		Clock.prototype.drawZhen = function(){
+			context.save();
+			//将画布平移到中点
+			context.translate(300,300);
+			//逆时针转90°，为了使绘制指针的时候 从 12点位置开始旋转 即 将原点变为12点钟方向
+			//设置初始状态
+			context.rotate(-90*deg);
+			
+			context.save();
+			//设置时针偏移 每小时旋转30°
+			context.rotate(this.hours*30*deg);
+			context.fillRect(0,-7,100,8);
+			context.restore();
+			
+			context.save();
+			//设置分针偏移 每小时旋转6°
+			context.rotate(this.minues*6*deg);
+			context.fillStyle = "cornflowerblue";
+			context.fillRect(0,-6,120,6);
+			context.restore();
+			
+			
+			//设置秒针偏移 每秒旋转6度
+			context.rotate(this.second*6*deg);
+			context.fillStyle = "red";
+			context.fillRect(0,-4,150,4);
+			
+			
+			context.restore();
+		}
+		
+		
+		
+		var clock = new Clock(300,300,200,"oldlace");
+		clock.draw();
+		clock.drawZhen();
+		
+		setInterval(function(){
+			var newDate = new Date();
+			var hours = newDate.getHours();
+			var minues = newDate.getMinutes();
+			var second = newDate.getSeconds();
+			
+			context.clearRect(0,0,canvas.width,canvas.height);
+			
+			
+			//var hourdeg = hours * 30 * deg + minutes * 6 * deg / 12 + second * 6 * deg / 12 / 60
+			//获得当前分针应该旋转的角度
+			//var minutedeg = minutes * 6 * deg + second * 6 * deg / 60;
+			//获得当前秒针应该旋转的角度
+			//var seconddeg = second * 6 * deg;
+			
+			
+			
+			clock.draw();
+			//clock.second = clock.second+1;
+			//clock.minues = clock.minues+1/60;
+			//clock.hours = clock.hours+1/3600;
+			clock.hours = hours;
+			clock.minues = minues;
+			clock.second = second;
+			clock.drawZhen();
+		},1000);
+	</script>
+</html>

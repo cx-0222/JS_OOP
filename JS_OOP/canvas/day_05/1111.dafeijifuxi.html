@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>飞机</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			#myCanvas {
+				box-shadow: 0 0 2px red;
+			}
+			.loadWrap {
+				position: absolute;
+				width: 414px;
+				height: 736px;
+				background-color: black;
+				opacity: 0.7;
+			}
+			.loadBox {
+				border-radius: 10px;
+				margin: 358px auto;
+				width: 80%;
+				height: 20px;
+				background-color: white;
+			}
+			.progress{
+				border-radius: 10px;
+				/*width: 50%;*/
+				height: 100%;
+				background-color: red;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="loadWrap">
+			<div class="loadBox">
+				<div class="progress">
+				    
+				</div>
+			</div>
+		</div>
+		<canvas id="myCanvas" width="0" height="0"></canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+		var loadWrap = document.getElementsByClassName("loadWrap")[0];
+		var loadBox = document.getElementsByClassName("loadBox")[0];
+		var progress = document.getElementsByClassName("progress")[0];
+		//图片预加载 将所有图片作为参数传入 
+		//同时传入图片加载后要执行的方法
+		function loading(objImg,obj){
+			//求出要加载图片的数量
+			var length = 0;
+			for (var i in objImg) {
+				length++;
+			}
+			
+			//存放图片对象
+			var imgObj = {};
+			//记录加载好了多少张
+			var num = 0;
+			for (var keys in objImg) {
+				//将要加载好的图片变为图片对象 因为后面会用到
+				var img = new Image();
+				img.src = objImg[keys];
+				//只有图片加载好了才可以存放进imgObj
+				//这里是在for循环内部用函数 涉及了变量污染问题 
+				//用闭包解决
+				img.onload = (function(keys,img){
+					//这里的this 指window 因为此时执行的还是自执行函数function(keys,img)
+					//它的执行者为window
+					return function(){
+						//相当于给img.onload 绑定了这个匿名函数 真正的执行者是当前加载的img 
+						//所以img 可以不传 用this代替 
+						num++;
+						//插入imgObj中
+						imgObj[keys] = img;
+						//图片加载的进度 用进度来决定调用哪个函数
+						var loads = num/length;
+						//加载函数 当进度发生变化时调用的函数
+						if(obj.load){
+							//安全处理 哪怕不需要这个函数也不会报错
+							//!!!!
+							obj.load(loads);
+						}
+						//表示所有图片加载完毕 loads来表示
+						if(num >= length){
+							if(obj.complete){
+								obj.complete(imgObj);
+							}
+						}
+					}
+				})(keys,img)
+			}
+		}
+		loading({
+			"bg":"img/background.png",
+			"hero":"img/herofly.png",
+			"bullet":"img/bullet2.png",
+			"enemy1":"img/enemy1.png",
+			"enemy2":"img/enemy2.png",
+			"enemy3":"img/enemy3.png"
+		},{
+			complete:main,
+			load:load
+		})
+		function load(loads){
+			//console.log(loads)
+			var pro = loads*100;
+			progress.style.width = pro+'%';
+		}
+		function main(imgObj){
+			loadWrap.style.display = "none";
+			//获取当前设备的宽高
+			var windowWidth = document.documentElement.clientWidth;
+			var windowHeight = document.documentElement.clientHeight;
+			//以此设置画布的宽高
+			canvas.width = windowWidth;
+			canvas.height = windowHeight;
+			
+			//构造英雄机
+			function Hero(){
+				this.img = 
+			}
+			
+			var times = 0;
+			function ani(){
+				if (times >= canvas.height) {
+					times = 0;
+				}
+				context.clearRect(0,0,canvas.width,canvas.height);
+				context.drawImage(imgObj.bg,0,times,canvas.width,canvas.height);
+				context.drawImage(imgObj.bg,0,times-canvas.height,canvas.width,canvas.height)
+				times++;
+				window.requestAnimationFrame(ani);
+			}
+			ani()
+		}
+	</script>
+</html>

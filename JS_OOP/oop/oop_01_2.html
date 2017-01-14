@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>共厂模式-汽车</title>
+	</head>
+	<body>
+	</body>
+	<script type="text/javascript">
+		function Car(name,color){
+			var obj = {};
+			obj.name = name;
+			obj.color = color;
+			
+			obj.running = function(){
+				console.log("五秒 提速至100码");
+			}
+			return obj;
+		}
+		
+		var BSJ = Car("保时捷 博克斯特","白色");
+		console.log(BSJ);
+		BSJ.running();
+	</script>
+</html>

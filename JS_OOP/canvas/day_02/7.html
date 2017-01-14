@@ -1,0 +1,67 @@
+<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			#myCanvas {
+				position: absolute;
+				/*background-color: gainsboro;*/
+				z-index: 99;
+			}
+			img {
+				position: absolute;
+				left: 100px;
+				top: 56px;
+			}
+			#video {
+				display: none;
+			}
+		</style>
+	</head>
+	<body>
+		<video id="video" width="600" height="600">
+			<source src="1.mp4" type="video/mp4"></source>
+			<source src="myvideo.ogv" type="video/ogg"></source>
+			<source src="myvideo.webm" type="video/webm"></source>
+			<object width="" height="" type="application/x-shockwave-flash" data="myvideo.swf">
+				<param name="movie" value="myvideo.swf" />
+				<param name="flashvars" value="autostart=true&amp;file=myvideo.swf" />
+			</object>
+			当前浏览器不支持 video直接播放，点击这里下载视频： <a href="myvideo.webm">下载视频</a>
+		</video>
+		<canvas id="myCanvas" width="800" height="600"></canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+		var video = document.getElementById("video");
+		
+		
+		video.oncanplay = function(){
+			video.play();
+			window.requestAnimationFrame(ani);
+		}
+		
+		function ani(){
+			context.drawImage(video,0,0,600,600);
+			var imgData = context.getImageData(0,0,600,600);
+			//console.log(imgData);
+			var arr = imgData.data;
+			for (var i = 0; i < arr.length; i+=4) {
+				if (i < arr.length / 3) {
+					arr[i] = 255;
+				} else if(i < arr.length*2/3 && i > arr.length / 3){
+					arr[i+1] = 255;
+				}else {
+					arr[i+2] = 255;
+				}
+			}
+			context.putImageData(imgData,0,0);
+			window.requestAnimationFrame(ani);
+		}
+		
+		ani()
+
+	</script>
+</html>
+

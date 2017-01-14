@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>白天知识点复习~小球碰撞</title>
+		<style type="text/css">
+			#myCanvas {
+				box-shadow: 0 0 2px red;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="myCanvas" width="600" height="600"></canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+		
+		//1.球的构造函数
+		function Qiu(x,y,r,color,speedX,speedY){
+			this.x = x;
+			this.y = y;
+			this.r = r;
+			this.color = color;
+			this.speedX = speedX;
+			this.speedY = speedY;
+			this.update = false;
+		}
+		//2.Qiu原型上的方法
+		Qiu.prototype.draw = function(){
+			context.beginPath();
+			context.fillStyle = this.color;
+			context.arc(this.x,this.y,this.r,0,2*Math.PI);
+			context.fill();
+		}
+		
+		//4.封装球动起来的方法
+		Qiu.prototype.move = function(){
+			//碰壁反弹
+			if (this.x + this.r >= canvas.width || this.x < this.r) {
+				this.speedX *= -1;
+			}
+			if (this.y + this.r >= canvas.height || this.y < this.r) {
+				this.speedY *= -1;
+			}
+			this.x = this.x + this.speedX;
+			this.y = this.y + this.speedY;
+			this.update = false;
+		}
+		//var qiu1 = new Qiu(100,100,20,"cyan",2,9);
+		//qiu1.draw();
+		
+		//5. 创建多个小球
+		var qiuArr = [];
+		for (var i = 0; i < 20; i++) {
+			var r = randomNum(20,10);
+			var x = randomNum(canvas.width-r,r);//不可以小于半径 所以先随机出半径 
+			var y = randomNum(canvas.height-r,r);
+			var rr = randomNum(255,0);
+			var gg = randomNum(255,0);
+			var bb = randomNum(255,0);
+			var color = "rgb(" + rr + "," + gg + "," + bb +")";
+			var speedX = randomNum(1,10);
+			var speedY = randomNum(1,10);
+			var qiu = new Qiu(x,y,r,color,speedX,speedY);
+			qiuArr.push(qiu);
+		}
+		//6.随机数函数
+		function randomNum(max,min){
+			return parseInt(Math.random()*(max-min+1)+min);
+		}
+		//3.先让一个球动起来 添加帧动画
+		function ani(){
+			context.clearRect(0,0,canvas.width,canvas.height);
+			//qiu1.x = qiu1.x + qiu1.speedX;
+			for (var i = 0; i < qiuArr.length; i++) {
+				qiuArr[i].move();
+				qiuArr[i].draw();
+			}
+			//qiu1.move();
+			//qiu1.draw();
+			
+			//判断球体之间的碰撞
+			//为啥是在这？？？
+			for (var j = 0; j < qiuArr.length; j++) {
+				for (var k = 0; k < qiuArr.length; k++) {
+					if(j != k){
+						if(peng(qiuArr[j],qiuArr[k])){
+							//当arr[j] 与 arr[k]相撞时 速率取反
+							//但是当arr[k]与 arr[j] 相撞时又会进行判断并取反 
+							//负负得正  所以没变化
+							//解决办法 加锁
+							if(qiuArr[j].update == false){
+								qiuArr[j].speedX *= -1;
+								qiuArr[j].speedY *= -1;
+								qiuArr[j].update = true;
+							}
+							if (qiuArr[k].update == false) {
+								qiuArr[k].speedX *= -1;
+								qiuArr[k].speedY *= -1;
+								qiuArr[k].update = true;
+							}
+						}
+					}
+				}
+			}
+			window.requestAnimationFrame(ani);
+		}
+		ani();
+		
+		//7.检测球与球之间的碰撞
+		function peng(el1,el2){
+			var x1 = el1.x;
+			var y1 = el1.y;
+			var x2 = el2.x;
+			var y2 = el2.y;
+			var r1 = el1.r;
+			var r2 = el2.r;
+			var d = Math.sqrt(Math.pow((x1-x2),2) + Math.pow((y1-y2),2));
+			if(d <= (r1 + r2)){
+				return true;
+			}
+			return false;
+		}
+	</script>
+</html>

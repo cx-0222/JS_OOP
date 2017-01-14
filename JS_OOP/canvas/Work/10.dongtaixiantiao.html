@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>动态线</title>
+		<style type="text/css">
+			#myCanvas {
+				box-shadow: 0 0 2px red;
+				background-color: gainsboro;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="myCanvas" width="600" height="600"></canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+		context.lineCap = "round";
+		context.lineWidth = 3;
+		//存放路径的数组
+		var pathArr = [];
+		pathArr.push({
+			x:100,
+			y:100
+		});
+		pathArr.push({
+			x:400,
+			y:100
+		});
+		pathArr.push({
+			x:300,
+			y:300
+		});
+		pathArr.push({
+			x:100,
+			y:500
+		});
+		pathArr.push({
+			x:400,
+			y:500
+		});
+		//context.beginPath();
+		//context.moveTo(100,100);
+		//context.lineTo(400,100);
+		//context.lineTo(300,300);
+		//context.lineTo(100,500);
+		//context.lineTo(500,500);
+		//context.stroke();
+		
+		//因为要实现动画效果 所以将线条分成100份 每次画一份 连着就是动画
+		//所以要获取这100份的每个路径点
+		var pathPoint = Waypoints(pathArr);
+		//console.log(pathPoint)
+		function Waypoints(pathArr){
+			var wayPointsArr = [];
+			for (var i = 1; i < pathArr.length; i++) {
+				var point0 = pathArr[i-1];
+				var point1 = pathArr[i];
+				//遍历求出每两点之间的X轴距离 和 Y轴距离
+				var disX = point1.x - point0.x;
+				var disY = point1.y - point0.y;
+				for (var j = 0; j < 100; j++) {
+					//以point0 为起点 以disX为半径 求每份的坐标点
+					var x = point0.x + disX * j / 100;
+					var y = point0.y + disY * j / 100;
+					//将求得的坐标点放进数组
+					wayPointsArr.push({
+						x:x,
+						y:y
+					});
+				}
+			}
+			//返回获取的坐标点
+			return wayPointsArr;
+		}
+		var times = 1;
+		function ani(){
+			if(times < pathPoint.length - 1){
+				//画完所有点 停止动画
+				requestAnimationFrame(ani);
+			}
+			context.beginPath();
+			context.moveTo(pathPoint[times - 1].x, pathPoint[times - 1].y);
+			context.lineTo(pathPoint[times].x, pathPoint[times].y);
+			context.stroke();
+			//console.log(11);
+			//放在绘制的下面 因为最后一次 times==pathPoint.length - 1 时 不走动画 但是会画完最后一个点
+			//但是times++ 如果放在上面 times=pathPoint.length 但数组没有这个值
+			//所以报错
+			times++;
+		}
+		ani();
+	</script>
+</html>

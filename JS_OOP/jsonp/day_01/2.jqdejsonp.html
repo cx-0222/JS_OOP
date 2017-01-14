@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>jq的jsonp</title>
+	</head>
+	<body>
+		<input type="text" name="inp" id="inp" value="" />
+		<ul id="uls"></ul>
+	</body>
+	<script src="../../Ajax/day_01/JQuery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		var inp = document.getElementById("inp");
+		var uls = document.getElementById("uls");
+		inp.oninput = function(){
+			console.log(this.value);
+			$.ajax({
+				type:"get",
+				url:"https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su",
+				data:{
+					wd:this.value
+				},
+				//必写 只有这样才可以知道是jsonp请求
+				dataType:"jsonp",
+				//用来替换URL中callback部分
+				jsonp:"cb",
+				success:success,
+				error:function(errors){
+					console.log("失败");
+					console.log(errors);
+				}
+			});
+		}
+		function success(data){
+			console.log(data);
+			uls.innerHTML = "";
+			for (var keys in data) {
+				if(keys == "s"){
+					for (var i = 0; i < data[keys].length; i++) {
+						var lis = document.createElement("li");
+						lis.innerHTML = data[keys][i];
+						uls.appendChild(lis);
+					}
+				}
+			}
+		}
+	</script>
+	<!--src 起的是引用效果 cd callback 回调函数-->
+	<!--<script src="https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd=a&cb=success" type="text/javascript" charset="utf-8">
+	</script>-->
+</html>

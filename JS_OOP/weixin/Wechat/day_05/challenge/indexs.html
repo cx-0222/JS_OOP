@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<title></title>
+		<style type="text/css">
+			body,html{
+				margin: 0;
+				padding: 0;
+				width: 100%;
+				height: 100%;
+			}
+			#myCanvas{
+				box-shadow: 0 0 10px cyan;
+				margin: auto;
+				display: block;
+			}
+			#btn{
+				width: 25%;
+				height: 14.08%;
+				background : url(img/demo/btn.png) 0px 0px / contain;
+				position: absolute;
+				left: 0;
+				top:0
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="myCanvas" width="" height=""></canvas>
+		<div id="btn">
+			
+		</div>
+	</body>
+	<script type="text/javascript">
+		var width = document.documentElement.clientWidth;
+		var height = document.documentElement.clientHeight;
+		var canvas = document.getElementById('myCanvas');
+		var context = canvas.getContext('2d');
+		var deg = Math.PI / 180;
+		var divs = document.getElementById('btn');
+		canvas.width = width;
+		canvas.height = height;
+		var scaleX = canvas.width/640;
+		var scaleY = canvas.height/1136;
+		
+		function loading(imgArr,fn){
+			var length = 0;
+			for(var keys in imgArr){
+				length++;
+			}
+			var num = 0;
+			var imgObj = {};
+			for(var keys in imgArr){
+				var img = new Image();
+				img.src = imgArr[keys];
+				img.onload = (function(key){
+					return function(){
+						num++;
+						imgObj[key] = this;
+						var sum = num/length;
+						if(fn.progress){
+							fn.progress(sum);
+						}
+						if(num>=length){
+							if(fn.complete){
+								fn.complete(imgObj);
+							}
+						}
+					}
+				})(keys)
+				
+			}	
+		}
+		loading({
+			"bg":"img/demo/index.png",
+			"len":"img/demo/len.png",
+			"matong":"img/demo/matong.png",
+			"yun1":"img/demo/云1.png",
+			"yun2":"img/demo/云2.png",
+			"dan1":"img/demo/dan1.png",
+			"qtang":"img/demo/qtang.png"
+		},{
+			complete:main
+		})
+		var img = new Image();
+		img.src = "img/demo/qtang.png";
+		function main(imgObj){
+			
+			function Yun(obj){
+				this.x = obj.x;
+				this.y = obj.y;
+				this.speedX = obj.speed;
+				this.img = obj.img;
+				this.w = obj.img.width * scaleX;
+				this.h = obj.img.height * scaleY;
+				this.children = new Li({
+					img:obj.LiImg
+				},this)
+			}
+			
+			Yun.prototype.move = function(){
+				this.x += this.speedX;
+				if(this.x < 0 || this.x > canvas.width - this.img.width*scaleX){
+					this.speedX *= -1;
+				}
+			}
+			
+			Yun.prototype.draw = function(){
+				context.drawImage(this.img,this.x,this.y,this.img.width * scaleX,this.img.height * scaleX);
+			}
+			
+			function Li(obj,parents){
+				this.w = obj.img.width * scaleX;
+				this.h = obj.img.height * scaleY;
+				this.x = parents.x + parents.w/2 - this.w/2;
+				this.y = parents.y + parents.h/2 - this.h/2;
+				
+				this.img = obj.img;
+				this.speedX = 0;
+				this.speedY = 0;
+				this.zhua = false;
+				this.parents = parents;
+			}
+			
+			Li.prototype.draw = function(){
+				context.drawImage(this.img,this.x,this.y,this.w,this.h);
+			}
+			
+			Li.prototype.move = function(){
+				
+				if(this.zhua && matong.shenLen != 0){
+					this.speedX = -Math.sin(matong.rotate*deg) * matong.speed;
+					this.speedY = Math.cos(matong.rotate*deg) * matong.speed;
+					if(matong.shenLen < 0){
+						this.speedY *= -1;
+						this.speedX *= -1;
+					}
+					
+				}else{
+					this.speedX = this.parents.speedX;
+					this.speedY = 0;
+				}
+				
+				this.x += this.speedX;
+				this.y += this.speedY;
+			}
+			
+			function Matong(){
+				this.x = 0;
+				this.y = 0;
+				this.w = imgObj.matong.width * scaleX;
+				this.h = imgObj.matong.height * scaleY;
+				this.ganX = 0;
+				this.ganY = 0;
+				this.ganLen =  155 * scaleY;
+				this.rotate = 45;
+				this.rotateSpeed = 1;
+				this.speed = 4;
+				this.shenLen = 0;
+				this.fang = "";
+				this.touchs = false;
+			}
+			
+			Matong.prototype.draw = function(){
+				context.save()
+				context.translate(canvas.width * 0.375,canvas.height * 0.2289);
+				context.rotate(this.rotate*deg);
+				context.drawImage(imgObj.len,this.ganX,this.ganY,imgObj.len.width/2,this.ganLen)
+				context.drawImage(imgObj.matong,this.ganX-imgObj.matong.width/4+imgObj.len.width/2/2,this.ganY+this.ganLen,imgObj.matong.width/2,imgObj.matong.height/2);
+				context.restore()
+			}
+			Matong.prototype.move = function(){
+				if(this.rotate >= 45){
+					this.rotateSpeed = -1; 
+				}else if(this.rotate <= -45){
+					this.rotateSpeed = 1;
+				}
+				
+				if(this.rotateSpeed > 0){
+					this.fang = "left";
+				}else if(this.rotateSpeed < 0){
+					this.fang = "right";
+				}
+				
+				this.rotate += this.rotateSpeed;
+				this.x = canvas.width * 0.375 - this.ganLen *Math.sin(this.rotate*deg);
+				this.y = canvas.height * 0.2289 + this.ganLen *Math.cos(this.rotate*deg);
+			
+				if(this.x <= 0 || this.x >= canvas.width - imgObj.matong.width/2 || this.y > canvas.height || this.touchs == 2){
+					this.shenLen = -this.speed;
+				}
+				
+				
+				if(this.ganLen < 155 * scaleY){
+					this.touchs = false;
+					this.shenLen = 0;
+					this.ganLen = 155 * scaleY;
+					if(this.fang == "left"){
+						this.rotateSpeed = 1;
+					}else{
+						this.rotateSpeed = -1;	
+					}
+				}
+				this.ganLen += this.shenLen;
+			}
+			var obj = new String("sad");
+			console.log(obj);
+			divs.addEventListener("touchstart",function(e){
+				var e = e || window.event;
+				
+				if(matong.ganLen != 155 * scaleY){
+					return;
+				}
+				matong.touchs = 1;
+				matong.shenLen = matong.speed;
+				matong.rotateSpeed = 0;
+				e.preventDefault();
+				e.stopPropagation();
+				
+			},false);
+			divs.addEventListener("touchend",function(){
+					matong.touchs = 2;
+			},false);
+			var matong = new Matong();
+			var yun1 = new Yun({
+				x:canvas.width * 0.2891,
+				y:canvas.height * 0.6313,
+				speed:3,
+				img:imgObj.yun1,
+				LiImg:imgObj.qtang
+			});
+			var yun2 = new Yun({
+				x:canvas.width * 0.2891,
+				y:canvas.height * 0.4313,
+				speed:3,
+				img:imgObj.yun2,
+				LiImg:imgObj.dan1
+			});
+			var yunArr = [yun1,yun2];
+			function ani(){
+				context.clearRect(0,0,canvas.width,canvas.height);
+				context.drawImage(imgObj.bg,0,0,canvas.width,imgObj.bg.height/imgObj.bg.width*canvas.width);
+				matong.move();
+				matong.draw();
+				
+				for (var i=0;i<yunArr.length;i++) {
+					yunArr[i].move();
+					yunArr[i].draw();
+					yunArr[i].children.move();
+					yunArr[i].children.draw();
+					if(matong.touchs == 1){
+						if(peng(yunArr[i].children,matong)){
+							matong.touchs = 2;
+							yunArr[i].children.zhua = true;
+						}
+					}
+					if(matong.touchs ==2){
+						if(yunArr[i].children.y <= 300){
+							yunArr[i].children = new Li({
+								img:imgObj.qtang
+							},yunArr[i]);
+						}
+					}
+				}
+				
+				window.requestAnimationFrame(ani);
+			}
+			ani();
+		}
+		function peng(obj1,obj2){
+			var x1 = obj1.x;
+			var l1 = obj1.w + x1;
+			var y1 = obj1.y;
+			var h1 = obj1.h + y1;
+			
+			var x2 = obj2.x;
+			var l2 = obj2.w + x2;
+			var y2 = obj2.y;
+			var h2 = obj2.h + y2;
+			if(l1>x2&&x1<l2&&h1>y2&&y1<h2){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		
+		
+	</script>
+</html>

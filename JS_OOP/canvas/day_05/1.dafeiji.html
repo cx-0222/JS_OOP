@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			
+			#myCanvas {
+				box-shadow: 0 0 2px red;
+			}
+			
+			#load {
+				width: 200px;
+				height: 200px;
+				background-color: red;
+				position: absolute;
+				left: 0;
+				top: 0;
+			}
+		</style>
+	</head>
+
+	<body>
+		<!--<div id="load">0</div>-->
+		<canvas id="myCanvas" width="600" height="600"></canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+		var loadDiv = document.getElementById("load");
+		//预加载方法能够帮我们实现
+		//图片的加载以及加载后调用我们
+		//想要执行的方法，并有进度传递
+		function loading(objImg, obj) {
+			var length = 0;
+			for(var keys in objImg) {
+				//求 一共加载了多少张图片
+				length++;
+			}
+
+			//遍历objimg 将每一张图片变成image对象 并添加src
+			var num = 0;
+			//用来储存我们的img对象
+			var imgObj = {};
+			for(var keys in objImg) {
+				var img = new Image();
+				img.src = objImg[keys];
+				//用属性解决变量的污染
+				//img.keyss = keys;
+				//console.log(img);
+				img.onload = (function(keyy, imgs) {
+
+					//console.log("外面是：");
+					//此处this 代表window 因为 闭包是匿名函数的自执行 
+					//因为是匿名函数 所以是由window调用 所以当前的this代表window
+					//console.log(this)
+
+					return function() {
+
+						//console.log("里面是：");
+						//在该闭包中我们让这个匿名函数 返回出去一个方法 最终实现的效果就是给我们
+						//img.onload绑定了一个方法 只不过在这个方法中使用的就是我们当前的循环变量
+						//而不是循环结束后的 最后一个值
+						//所以这个方法真正执行时的执行者就是我们当前加载好的图片 
+						//即当前的this就是我们的img对象
+						//console.log(this)
+
+						//记录多少张图片加载好啦
+						num++;
+
+						//给对象设置keys属性
+						//imgObj[this.keyss] = this;
+						//利用闭包解决变量污染 要传入 keys 和 img 因为是被污染的变量
+
+						imgObj[keyy] = imgs;
+						var loads = num / length;
+
+						if(obj.load) { //如果有这个属性 就执行load()
+							//如果不需要进度条 即没有这个属性也不会报错
+							//进度条发生变化的时候 调用load()方法	
+							obj.load(loads);
+						}
+						if(num >= length) {
+							if(obj.complete) {
+								//this 代表当前加载好的img
+								obj.complete(imgObj);
+							}
+						}
+					}
+				}(keys, img))
+
+			}
+
+		}
+
+		//调用loading方法
+		loading({
+			"bg": "img/background.png",
+			"hero": "img/herofly.png",
+			"bullet": "img/bullet2.png",
+			"enemy1": "img/enemy1.png",
+			"enemy2": "img/enemy2.png",
+			"enemy3": "img/enemy3.png"
+		}, {
+			//成功的时候去调用的方法
+			complete: main,
+			load: load
+		})
+
+		function main(imgObj) {
+			//console.log("main执行了");
+			//console.log(imgObj);
+			//context.drawImage(imgObj.hero, 100, 100);
+			//获取设备的宽高
+			var windowWidth = document.documentElement.clientWidth;
+			//console.log(windowWidth);
+			var windowHeight = document.documentElement.clientHeight;
+			//console.log(windowHeight);
+			//根据设备的宽高 设置canvas的宽高
+			canvas.width = windowWidth;
+			canvas.height = windowHeight;
+
+			//英雄机
+			function Hero() {
+				this.img = imgObj.hero;
+				//除5 因为 是精灵图  要求一个飞机的宽度
+				this.x = canvas.width / 2 - this.img.width / 5 / 2;
+				this.y = canvas.height - this.img.height * 2;
+				this.w = this.img.width / 5;
+				this.h = this.img.height;
+			}
+			//绘制英雄机
+			Hero.prototype.draw = function() {
+				context.drawImage(this.img, 0, 0, this.img.width / 5, this.img.height, this.x, this.y, this.w, this.h);
+			}
+			var hero = new Hero();
+			//英雄即=机touch事件
+			canvas.addEventListener("touchmove", function(e) {
+				var ev = e || window.event;
+				//console.log(ev);
+				var x = ev.touches[0].clientX;
+				var y = ev.touches[0].clientY;
+				//console.log(x, y);
+				hero.x = x - hero.w / 2;
+				hero.y = y - hero.h / 2;
+			}, false);
+
+			//子弹的构造函数
+			function Bullet() {
+				this.img = imgObj.bullet;
+				this.w = this.img.width;
+				this.h = this.img.height;
+				this.x = hero.x + (hero.w - this.w) / 2;
+				this.y = hero.y - 2 * this.h;
+				this.speedY = 5;
+				this.power = 1;
+			}
+			//绘制子弹
+			Bullet.prototype.draw = function() {
+					context.drawImage(this.img, this.x, this.y);
+				}
+				//子弹动
+			Bullet.prototype.move = function() {
+					this.y -= this.speedY;
+				}
+				//var bul1 = new Bullet();
+			var bulletArr = [];
+
+			//敌机构造函数
+			function Enemy() {
+				var num = rand(1, 20);
+				if(num >= 1 && num <= 10) {
+					//绘制小飞机
+					this.length = 5;
+					this.img = imgObj.enemy1;
+					this.w = this.img.width / 5;
+					this.hp = 1;
+					this.speedY = 8;
+				} else if(num >= 11 && num <= 18) {
+					//绘制中飞机
+					this.length = 6;
+					this.img = imgObj.enemy3;
+					this.w = this.img.width / 6;
+					this.hp = 3;
+					this.speedY = 5;
+				} else {
+					//绘制大飞机
+					this.length = 10; //存放精灵图的张数
+					this.img = imgObj.enemy2;
+					this.w = this.img.width / 10;
+					this.hp = 8;
+					this.speedY = 1;
+				}
+				this.h = this.img.height;
+				this.x = rand(0, canvas.width - this.w);
+				this.y = -this.h;
+				//绘制到第几张了
+				this.index = 0;
+				//敌机是是死是活
+				this.life = true;
+			}
+
+			function rand(min, max) {
+				return Math.random() * (max - min) + min;
+			}
+
+			//绘制敌机
+			Enemy.prototype.draw = function() {
+				context.drawImage(this.img, this.index * this.w, 0, this.w, this.h, this.x, this.y, this.w, this.h);
+			}
+			Enemy.prototype.move = function() {
+				this.y += this.speedY;
+			}
+			var enemyArr = [];
+
+			var times = 0;
+
+			function ani() {
+				if(times >= canvas.height) {
+					times = 0;
+				}
+				context.clearRect(0, 0, canvas.width, canvas.height);
+				context.drawImage(imgObj.bg, 0, times, canvas.width, canvas.height);
+				context.drawImage(imgObj.bg, 0, times - canvas.height, canvas.width, canvas.height);
+				times++;
+				hero.draw();
+				if(times % 20 == 0) {
+					var bullet = new Bullet();
+					bulletArr.push(bullet);
+				}
+				for(var i = 0; i < bulletArr.length; i++) {
+					if(bulletArr[i].y <= -bulletArr[i].h) {
+						bulletArr.splice(i, 1);
+						i--;
+						continue;
+					}
+					bulletArr[i].move();
+					bulletArr[i].draw();
+				}
+				if(times % 50 == 0) {
+					var enemy = new Enemy();
+					enemyArr.push(enemy);
+				}
+				for(var j = 0; j < enemyArr.length; j++) {
+					if(enemyArr[j].y >= canvas.height) {
+						enemyArr.splice(j, 1);
+						j--;
+						continue;
+					}
+					enemyArr[j].move();
+					if(enemyArr[j].life == false) {
+						if(enemyArr[j].index < enemyArr[j].length) {
+							if(times % 5 == 0) {
+								enemyArr[j].index++;
+							}
+							enemyArr[j].draw();
+						} else {
+							enemyArr.splice(j, 1);
+							j--;
+							continue;
+						}
+					}
+					//正常敌机的绘制
+					enemyArr[j].draw();
+				}
+
+				//子弹与敌机的碰撞检测
+				for(var k = 0; k < bulletArr.length; k++) {
+					for(var n = 0; n < enemyArr.length; n++) {
+						if(peng(bulletArr[k], enemyArr[n])) {
+							enemyArr[n].hp -= bulletArr[k].power;
+							bulletArr.splice(k, 1);
+							k--;
+							if(enemyArr[n].hp <= 0) {
+							//for(var m = 0; m < enemyArr[n].length; m++){
+								//enemyArr[n].index = m;
+								//enemyArr[n].draw();
+							//}
+								//敌机挂了
+								enemyArr[n].life = false;
+								//将速度清了
+								enemyArr[n].speedY = 0;
+								//enemyArr.splice(n,1);
+								//n--;
+								//break;
+							}
+							break;
+						}
+					}
+				}
+
+				window.requestAnimationFrame(ani);
+			}
+			ani();
+
+			function peng(r1, b1) {
+
+				//碰撞的条件
+				//r1.x < b1.x+b1.w
+				//b1.x < r1.x + r1.w
+				//r1.y < b1.y+b1.h
+				//b1.y < r1.y + r1.h
+				var r1l = r1.x + r1.w;
+				var r1h = r1.y + r1.h;
+				var b1l = b1.x + b1.w;
+				var b1h = b1.y + b1.h;
+				if(r1.x <= b1l && b1.x <= r1l && b1.y <= r1h && r1.y <= b1h) {
+					//alert("zhuangle");
+					return true;
+				}
+				return false;
+			}
+
+		}
+
+		function load(loads) {
+			//loadDiv.innerHTML = loads;
+			//console.log("我的进度是：")
+			//console.log(loads);
+		}
+	</script>
+
+</html>

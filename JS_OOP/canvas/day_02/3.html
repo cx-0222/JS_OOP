@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			body {
+				position: relative;
+				margin: 0;
+				padding: 0;
+			}
+			
+			#myCanvas {
+				box-shadow: 0 0 3px black;
+				/*margin: 50px;*/
+			}
+			
+			#qiu1,
+			#qiu2 {
+				position: absolute;
+				outline: none;
+				width: 30px;
+				height: 30px;
+				border-radius: 50%;
+				background: aquamarine;
+				border: 0px solid transparent;
+			}
+			
+			#qiu1 {
+				left: 85px;
+				top: 85px;
+			}
+			
+			#qiu2 {
+				left: 385px;
+				top: 385px;
+				background: fuchsia;
+			}
+		</style>
+	</head>
+
+	<body>
+		<canvas id="myCanvas" width="600" height="600"></canvas>
+		<button id="qiu1"></button>
+		<button id="qiu2"></button>
+		<h2 id="title"></h2>
+	</body>
+	<script type="text/javascript">
+		var myCanvas = document.querySelector("#myCanvas");
+		var context = myCanvas.getContext("2d");
+		var qiu1 = document.querySelector("#qiu1");
+		var qiu2 = document.querySelector("#qiu2");
+		var title = document.querySelector("#title");
+
+		function Bezier(qiu1X, qiu1Y, qiu2X, qiu2Y) {
+			this.qiu1 = {};
+			this.qiu1.x = qiu1X;
+			this.qiu1.y = qiu1Y;
+			this.qiu2 = {};
+			this.qiu2.x = qiu2X;
+			this.qiu2.y = qiu2Y;
+		}
+
+		Bezier.prototype.draw = function() {
+			context.fillStyle = "#F0F8FF"
+			context.fillRect(100, 100, 300, 300);
+
+			//画小球线
+			context.save();
+
+			context.beginPath();
+			context.moveTo(100, 400);
+			context.lineTo(this.qiu1.x, this.qiu1.y);
+			context.strokeStyle = "red";
+			context.stroke()
+
+			context.beginPath();
+			context.moveTo(400, 100);
+			context.lineTo(this.qiu2.x, this.qiu2.y);
+			context.strokeStyle = "red";
+			context.stroke()
+
+			context.restore();
+
+			context.save();
+			//画贝塞尔曲线
+			context.beginPath();
+			//起点
+			context.moveTo(100, 400);
+			//
+			context.bezierCurveTo(this.qiu1.x, this.qiu1.y, this.qiu2.x, this.qiu2.y, 400, 100);
+			context.lineWidth = 6;
+			context.stroke();
+			context.restore()
+		}
+
+		var bezier = new Bezier(100, 100, 400, 400);
+		bezier.draw();
+
+		qiu1.onmousedown = qiu2.onmousedown = function() {
+			//console.log(this);
+			var _this = this
+			document.onmousemove = function(e) {
+				//判断_this 是qiu1 还是 qiu2
+				var ev = e || window.event;
+				var x = ev.clientX;
+				var y = ev.clientY;
+				//用this 而不用 target的原因 
+				//因为如果滑快滑出qiu后 target就不是原来的target
+				
+				var qiu = "";
+				if(_this.id == "qiu1") {
+					//控制点本来就是圆心 所以不用减15
+					qiu = bezier.qiu1;
+					//bezier.qiu1.x = x;
+					//bezier.qiu1.y = y;
+					//qiu1.style.left = x - 15 + "px";
+					//qiu1.style.top = y - 15 + "px";
+				} else if(_this.id == "qiu2"){
+					qiu = bezier.qiu2;
+					//bezier.qiu2.x = x;
+					//bezier.qiu2.y = y;
+					//qiu2.style.left = x - 15 + "px";
+					//qiu2.style.top = y - 15 + "px";
+				}
+				qiu.x = x;
+				qiu.y = y;
+				_this.style.left = x - 15 + "px";
+				_this.style.top = y - 15 + "px";
+				context.clearRect(0, 0, myCanvas.width, myCanvas.height);
+				bezier.draw()
+			}
+			document.onmouseup = function() {
+				document.onmousemove = null;
+			}
+		}
+	</script>
+
+</html>

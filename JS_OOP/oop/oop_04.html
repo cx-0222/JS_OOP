@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>原型链</title>
+	</head>
+	<body>
+		<div id="outer"></div>
+	</body>
+	<script type="text/javascript">
+		//原型链：是指对象在访问属性或方法时的查找方式
+		function Person(name){
+			this.name = name;
+			this.talk = function(){
+				console.log("talk");
+			}
+			//1.
+			//this.say = function(){
+				//console.log("我是obj");
+			//}
+		}
+		
+		//2.
+		//Person.prototype.say = function(){
+			//console.log("我是proto");
+		//}
+		
+		//3.
+		//Object 的原型 只能追加不可替换
+		Object.prototype.say = function(){
+			console.log("我是顶端");
+		}
+		//console.log(document)		
+		var person = new Person('cx');
+		person.say();//优先级 1> 2> 3
+		
+		
+		var divs = document.getElementById("outer");
+		//console.log(divs);
+		
+		console.log(person);
+	</script>
+</html>

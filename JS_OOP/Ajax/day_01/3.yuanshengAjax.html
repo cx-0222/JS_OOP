@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>get方式</title>
+	</head>
+	<body>
+	</body>
+	<script type="text/javascript">
+	//1.创建Ajax请求对象
+		var ajax = {};
+		if (window.XMLHttpRequest) {
+			ajax = new XMLHttpRequest();
+		} else if(window.ActiveXObject){
+			ajax = new ActiveXObject("Microsoft.XMLHTTP");
+		}
+	//2.创建一个请求(请求的方式以及要访问的php)
+		ajax.open("get","3.yuanshengAjax.php?name=cx");
+	//3.发送请求
+		//
+		ajax.send();
+	//4.捕获请求状态 绑定我们状态改变的方法
+		//状态发生变化就会调用的方法
+		ajax.onreadystatechange = function(){
+			//console.log("哈哈");
+			//5.判断请求状态
+			if (ajax.readyState == 4) {
+				//6.判断请求的结果
+				//console.log(ajax);
+				if(ajax.status == 200){
+					//7.返回获取的结果
+					//获取到的数据ajax.responseText
+					succ(ajax.responseText);
+				}
+			}
+		}
+		
+		
+		function datas(data){
+			//console.log("datas");
+			var obj = JSON.parse(data);
+			console.log(obj);
+		}
+		function succ(data){
+			//console.log("succ");
+			console.log(data);
+		}
+	</script>
+</html>

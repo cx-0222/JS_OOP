@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Jq_Ajax</title>
+		<style type="text/css">
+			#content {
+				width: 500px;
+				height: 500px;
+				background-color: burlywood;
+				/*text-align: center;*/
+				line-height: 20px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="content">
+			<ul id="oUl">
+				
+			</ul>
+		</div>
+	</body>
+	<script src="JQuery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		var divs = document.getElementById("content");
+		var oUl = document.getElementById("oUl");
+		divs.onclick = function() {
+			//异步
+			//没有跳转到相应的php文件 但仍可以捕获到php中输出的内容
+			$.ajax({
+				type: "get",
+				//url: "1.ajax.server.php",
+				url: "11.ajax.server.php",
+				//传给php的数据
+				data: {
+					name: "cx",
+					userId:1
+				},
+				//dataType 要求传过来的字符串必须是json字符串
+				//dataType:"json",
+				success: function(data) {
+					console.log("成功");
+					//console.log(data);
+					//divs.innerHTML = data;
+					//json字符串传回来的时隔对象 要想获取值 就是data["name"]或data.name
+					//console.log(typeof data);//string
+					//将字符串转换为json对象
+					var obj = JSON.parse(data);
+					//console.log(typeof obj);
+					console.log(obj);
+					//obj [Object, Object, Object, Object] 所以也可以用for循环 
+					//只输出那么的时候 obj[i].name
+					for(var keys in obj){
+						//console.log(keys);
+						//console.log(obj[keys]);
+						for(var keyss in obj[keys]){
+							console.log(obj[keys][keyss]);
+							var li = document.createElement("li");
+							li.innerHTML =keyss +" : "+ obj[keys][keyss];
+							oUl.appendChild(li);
+						}
+						//divs.innerHTML += keys+' : '+obj[keys]+"<br>";
+					}
+				},
+				error: function(errors) {
+					console.log("失败");
+					console.log(errors);
+				}
+			});
+		}
+	</script>
+</html>

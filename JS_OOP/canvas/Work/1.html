@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+	<head lang="en">
+		<meta charset="UTF-8">
+		<title>CANVAS制作简单在线画板</title>
+		<style type="text/css">
+			#canvas {
+				border: 1px solid #333;
+				display: block;
+				margin: 20px auto;
+			}
+			
+			#color {
+				width: 100px;
+				height: 32px;
+				position: absolute;
+				right: 115px;
+				top: 200px;
+			}
+			
+			#range {
+				width: 100px;
+				height: 32px;
+				position: absolute;
+				right: 115px;
+				top: 125px;
+			}
+			
+			#demo {
+				background: black;
+				width: 100px;
+				height: 5px;
+				position: absolute;
+				right: 115px;
+				top: 100px;
+			}
+		</style>
+	</head>
+
+	<body background-color="rgba(0,0,0,0.5)">
+		<div class="box">
+			<h3 align="center">CANVAS制作简单在线画板</h3>
+			<canvas id="canvas" width="800" height="600"></canvas>
+			<input type="color" id="color" />
+			<div id="demo"></div>
+			<input type="range" id="range" min="1" max="10" />
+		</div>
+		<script type="text/javascript">
+			var canvas = document.getElementById("canvas");
+			var cxt = canvas.getContext("2d");
+			var color = document.getElementById("color");
+			var size = document.getElementById("range");
+			var demo = document.getElementById("demo");
+			//根据size的变化来使得size上面的线条演示画笔粗细。
+			size.onchange = function() {
+					demo.style.height = size.value + "px";
+				}
+				//使得color的颜色与演示线条的颜色一致
+			color.onchange = function() {
+				demo.style.background = color.value;
+			}
+			var flag = false;
+			//鼠标按下
+			canvas.onmousedown = function(e) {
+				var mouseX = e.pageX - this.offsetLeft;
+				var mouseY = e.pageY - this.offsetTop;
+				flag = true;
+				cxt.beginPath();
+				cxt.lineWidth = size.value;
+				cxt.strokeStyle = color.value;
+				cxt.moveTo(mouseX, mouseY);
+			};
+			//鼠标移动
+			canvas.onmousemove = function(e) {
+					var mouseX = e.pageX - this.offsetLeft;
+					var mouseY = e.pageY - this.offsetTop;
+					if(flag) {
+
+						cxt.lineTo(mouseX, mouseY);
+						cxt.stroke();
+					}
+				}
+				//鼠标松开
+			canvas.onmouseup = function(e) {
+				flag = false;
+			}
+		</script>
+	</body>
+
+</html>

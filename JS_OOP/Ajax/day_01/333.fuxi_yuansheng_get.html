@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>原生ajax_get方式</title>
+	</head>
+	<body>
+	</body>
+	<script type="text/javascript">
+		//1.创建一个XMLHttpRequest对象
+		var ajax = false;
+			//!!浏览器的兼容
+			if (window.XMLHttpRequest) {
+				ajax = new XMLHttpRequest();
+			} else if(window.ActiveXObject){
+				ajax = new ActiveXObject("microsoft.XMLHTTP");
+			}
+		//2.创建一个请求
+		 //open(method, url, asynchronous, user, password);
+		 //Method:指定请求类型，一般为get或者post;
+		 //url:	指定请求的地址，可以是绝对地址或者相对地址，可以附带查询字符串;
+		 //Asynchronous:(可选)表示请求是同步还是异步，同步请求为false, 异步为true,默认为true;
+		 //User:(可选）指定请求的用户名;
+		 //Password:(可选) 指定请求密码;
+		ajax.open("get","333.fuxi_yuansheng_get.php?name=cx");
+		//3.发送请求
+		 // send(content);
+	     //该方法有一个参数content,
+	     //它表示要向服务器发送的数据，其格式为查询字符串形式;
+		ajax.send();
+		//4.捕获请求的状态
+			//状态改变时调用的方法
+		ajax.onreadystatechange = function(){
+			//5.判断请求状态 4 表示数据已经接收成功
+			if (ajax.readyState == 4) {
+				//6.判断请求的结果 200表示请求成功
+				if (ajax.status == 200) {
+					//7.返回获取的结果 ajax.responseText
+					succeed(ajax.responseText);
+				}
+			}
+		}
+		
+		function succeed(data){
+			console.log(data);
+		}
+	</script>
+</html>

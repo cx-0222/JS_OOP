@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>TagName id class选择器仿写</title>
+		<style type="text/css">
+			#outer {
+				width: 100px;
+				height: 100px;
+				background-color: red;
+			}
+			
+			div {
+				width: 300px;
+				height: 300px;
+				background-color: blue;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="outer">
+			<div class="center">
+				<div id="inner">
+					<span class="ooo">ssspppaaannn</span>
+					<p>vvxc</p>
+					<a href=""></a>
+					<span></span>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript">
+		function selectEl(arg) {
+			var reg = /^\s+|\s+$/g;
+			arg = arg.replace(reg, "");
+			var reg1 = /\s+/g;
+			arg = arg.replace(reg1, " ");
+			var elArr = arg.split(" ");
+			var parentArr = [document];
+			for(var i = 0; i < elArr.length; i++) {
+				var childArr = [];
+				for(var j = 0; j < parentArr.length; j++) {
+
+					//判断是什么选择器
+					//①# id
+					//②. class
+					//③ tagname 
+
+					//test() 方法用于检测一个字符串是否匹配某个模式.
+					if(/^#/.test(elArr[i])) {
+						//substring(start,stop) 方法用于提取字符串中介于两个指定下标之间的字符。
+						//start	必需。一个非负的整数，规定要提取的子串的第一个字符在 stringObject 中的位置。
+						//stop 可选。一个非负的整数，比要提取的子串的最后一个字符在 stringObject 中的位置多 1。
+						//如果省略该参数，那么返回的子串会一直到字符串的结尾。
+
+						//字符串截取 去掉第一位的# 或 .
+						var ids = elArr[i].substring(1);
+						//第一次 parentArr 只有一个document 所以执行了if 就不会进else if 
+						//然后再去判断for(j)有没有执行完 但此时 for(j)只执行一次
+						//又因为下面的childArr没东西 所以没办法更新parentArr
+						//console.log(ids);
+						var el = document.getElementById(ids);
+						if(childArr.indexOf(el) == -1) {
+							childArr.push(el);
+						}
+					} else if(/^\./.test(elArr[i])) {
+						var clas = elArr[i].substring(1);
+						//console.log(clas);
+						//parentArr[j].getElementsByClassName(clas)
+						//辅助函数为了实现兼容
+						var resultArr = findClass(parentArr[j], clas);
+						for(var k = 0; k < resultArr.length; k++) {
+							if(childArr.indexOf(resultArr[k] == -1)) {
+								childArr.push(resultArr[k]);
+							}
+						}
+					} else {
+						var resultArr = parentArr[j].getElementsByTagName(elArr[i]);
+						for(var k = 0; k < resultArr.length; k++) {
+							if(childArr.indexOf(resultArr[k] == -1)) {
+								childArr.push(resultArr[k]);
+							}
+						}
+					}
+				}
+				parentArr = childArr;
+			}
+			return parentArr;
+		}
+		
+
+		//辅助函数 查找类
+		function findClass(obj, className) {
+			var resultArr = [];
+			//如果有这个方法
+			if(obj.getElementsByClassName) {
+				resultArr = obj.getElementsByClassName(className);
+			} else {
+				//没有该方法 eg:旧版本IE
+				//找出该节点下面的所有子节点
+				var arrs = obj.getElementsByTagName("*");
+				//遍历该数组 看看有没有 class=className 的
+				for(var i = 0; i < arrs.length; i++) {
+					//<p class="cccc pppp"></p>
+					//"ccc ppp" == "ccc"??
+					//"ccccc ppp" == "ccc"??
+					//解决办法
+					// \b 匹配单词边界
+					//正则加变量 不可以直接去语法糖的里面加 /\b+className+\b/ 加号 本来在正则里面就有特殊含义
+					
+					var reg = new RegExp("\\b" + className + "\\b");
+					if(reg.test(arrs[i].className)) {
+						resultArr.push(arrs[i]);
+					}
+				}
+			}
+			return resultArr;
+		}
+
+		
+
+		var arr = selectEl("  div div  div  ");
+		console.log(arr);
+		
+		
+
+
+
+
+
+
+		
+		//$()本身就是一个方法
+		function $(arg){
+			return new Jq(arg);
+		}
+
+		//jq 的构造函数 三种情况
+		//$("div")  $(function(){}) $(body)(原生)
+		function Jq(){
+			//只有属性 在原型中能被访问  如果是局部变量 在原型中无法调用
+			this.elements = [];
+			if (typeof arg == "string") {
+				this.elements = selectEl(arg);
+			} else if(typeof arg == "function"){
+				//辅助函数 window.addEventListener兼容
+				//addEventListener("DOMContentLoaded");
+				ready(arg);
+			}else{
+				this.elements.push(arg);
+			}
+		}
+		
+		Jq.prototype.on = function(evenName,fn){
+			//循环绑定方法  比如 on 方法
+			for (var i = 0; i < this.elements.length; i++) {
+				this.elements.addEventListenerNS(evenName,fn,false);
+			}
+		}
+		
+		
+		
+		
+		
+		
+		//辅助函数 window.addEventListener兼容
+		function ready(fn){
+			if (window.addEventListener) {
+				document.addEventListener("DOMContentLoaded",fn,false);
+			} else{
+				//创建script标签
+				var os = document.createElement("script");
+				//设置属性
+				os.defer = true;
+				//状态发生改变的时候执行的方法
+				os.onreadystatechange = function(){
+					//当状态改变时 执行 传过来的方法
+					if (os.readyState == "complete") {
+						fn();
+					}
+				}
+				//将创建的 script 标签插入到文档中
+				var oh = document.getElementsByTagName("head")[0];
+				oh.appendChild(os);
+			}
+		}
+
+
+
+		
+	</script>
+
+</html>

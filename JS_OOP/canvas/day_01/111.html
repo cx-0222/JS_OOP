@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>白天知识点复习</title>
+		<style type="text/css">
+			#myCanvas {
+				background-color: gainsboro;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="myCanvas" width="800" height="800"></canvas>
+	</body>
+	<script type="text/javascript">
+		//canvas 标签 
+		//1. 属性 宽 高 设置时 不需要style  且 只用给数值
+		var canvas = document.getElementById("myCanvas");
+		//canvas.width = 600;
+		//canvas.height = 600;
+		//2. 获取画布
+		var context = canvas.getContext("2d");
+	//线条
+		//开始一条路径
+		context.beginPath();
+		//moveTo(x,y)设置起点
+		context.moveTo(0,0);
+		//context.lineTo(x,y)设置下一个点
+		context.lineTo(300,300);
+		//设置线条颜色 设置线条粗细  ！！！必须放在绘制线条之前
+		context.strokeStyle = "red";
+		context.lineWidth = 10;//!!!设置线宽
+		//绘制线条
+		//context.stroke();
+		
+	//矩形
+		//1.每次绘制不相关的图像的时候 都必须重新开始一条路径
+		//2.strokeStyle  lineWidth 等是对画布设置的属性 如果不重新赋值，就会一直沿用
+		context.beginPath();
+		context.moveTo(100,100);
+		context.lineTo(400,100);
+		context.lineTo(400,200);
+		context.lineTo(100,200);
+		//闭合 形成矩形
+		//context.lineTo(100,100);
+		//闭合路径，会从当前点链接到起始点 形成闭合路径
+		context.closePath();
+		//context.strokeStyle = "black";
+		//context.lineWidth = 3;
+		//context.stroke();
+		//要求红色的方块
+		//填充
+		//填充样式
+		//context.fillStyle = "red";
+		//context.fill();
+		
+	//绘制多个矩形 每个宽高都相差50 形成层叠
+		var dis = 50;
+		var colorArr = ["red","blue","yellow","cyan"];
+		for(var i = 0; i < 4; i++){
+			context.beginPath();
+			context.moveTo(100+50*i,100+50*i);
+			context.lineTo(400+50*i,100+50*i);
+			context.lineTo(400+50*i,200+50*i);
+			context.lineTo(100+50*i,200+50*i);
+			context.fillStyle = colorArr[i];
+			//context.fill();
+		}
+		
+	//绘制矩形边框
+		//绘制矩形边框 context.strokeRect(x,y,w,h)
+		//x	矩形左上角的 x 坐标
+		//y	矩形左上角的 y 坐标
+		//width	矩形的宽度，以像素计
+		//height	矩形的高度，以像素计
+		//设置样式
+		context.strokeStyle = "orange";
+		context.lineWidth = 5;
+		//context.strokeRect(100,100,300,100);
+	//填充矩形边框 绘制矩形 参数与strokeRect()相同
+		context.fillStyle = "brown";
+		//context.fillRect(300,300,100,200);
+	//Rect() 绘制矩形 与上面的不同在于需要手动填充或者绘制！！！
+		context.beginPath();
+		context.rect(100,300,100,200);
+		//context.stroke();
+		//context.fill();
+		
+	//绘制圆形
+	//context.arc(x,y,radius,starAngle,endAngel,anticlockwise);
+	//x,y:圆心位置 radius:半径 startAngle,endAngle:开始/结束角 anticlockwise:true逆时针
+	//三点钟方向为0° 默认为false 逆时针旋转
+	//所以 如果度数增加就是顺时针旋转 false
+	//如果度数减少 就是逆时针方向 true
+	//Math.PI 表示180°
+		context.beginPath();
+		context.arc(100,100,50,0,2*Math.PI,false);
+		context.fillStyle = "yellow"
+		//context.stroke();
+		//context.fill()
+		
+	//绘制文字
+		var text = "绘制文字";
+		//设置文字样式：
+		context.font = "normal 50px italic serif";
+		context.lineWidth = 1;
+		//context.strokeStyle = "red";
+	//绘制文字 没有填充！！！
+		//context.strokeText(text,x,y,maxWidth); 
+		//text	规定在画布上输出的文本。
+		//x	开始绘制文本的 x 坐标位置（相对于画布）。
+		//y	开始绘制文本的 y 坐标位置（相对于画布）。
+		//maxWidth	可选。允许的最大文本宽度，以像素计。
+		//context.strokeText(text,100,100);
+	//填充文字
+		//context.fillStyle = "cyan";
+		//context.fillText(text,100,100);
+	//渐变
+	//createLinearGradient(x0,y0,x1,y1);
+		//x0,y0:渐变开始点
+		//x1,y1:渐变结束点
+		var gradient = context.createLinearGradient(100,100,400,100);
+		//0 0.5 1 表示画布的比例 只有当文字处于对应的区域的时候，才会出现对应的颜色
+		gradient.addColorStop("0","blue");
+		gradient.addColorStop("0.5","green");
+		gradient.addColorStop("1","red");
+		
+		//context.strokeStyle = gradient;
+		//context.strokeText(text,100,100);
+		
+		context.fillStyle = gradient;
+		//context.fillText(text,100,100);
+		//context.fillRect(100,150,400,400);
+		
+	//阴影设置
+		context.beginPath();
+		
+		//！！放在绘制之前
+		//阴影颜色
+		//context.shadowColor = "gold";
+		//阴影模糊程度
+		//context.shadowBlur = 10;
+		//偏移
+		//context.shadowOffsetX = 2;
+		//context.shadowOffsetY = -2;
+		
+		
+		context.lineWidth = 5
+		context.strokeStyle = "yellow";
+		//context.strokeRect(100,100,300,100);
+		
+		
+	//图形变换 均是对画布的操作
+	//平移
+		context.fillStyle = "green";
+		context.fillRect(0,0,300,100);
+		//context.translate(150,150);
+		context.fillStyle = "blue";
+		//同样的位置画的同样大小的矩形，但是却在下面 是因为 context.translate(150,150);将画布向下平移了
+		context.fillRect(0,0,300,100);
+	//旋转
+		//context.rotate(0.25*Math.PI);
+		context.fillStyle = "yellow";
+		context.fillRect(0,0,300,100);
+	//缩放
+		//context.scale(2,2);
+		context.fillStyle = "red";
+		//!!!距离 当y坐标为50的时候 实际距离是100  因为会被放大两倍
+		context.fillRect(0,50,300,100);
+	
+	
+	//贝塞尔曲线
+		context.clearRect(0,0,canvas.width,canvas.height);
+	//二次曲线
+		//曲线是线条 所以 也要 开始曲线 和设置起点
+		context.beginPath();
+		context.moveTo(200,200);
+		//context.quadraticCurveTo(控制点x,控制点y,终点x,终点y);
+		//300 -->起点100 与 -->终点100 距离相同 
+		//250 --->起点100 与 -->终点400 距离相同
+		//所以上下对称
+		//context.quadraticCurveTo(300,250,100,400);
+		context.quadraticCurveTo(450,110,200,500);
+		//context.stroke();
+		
+		
+		context.moveTo(200,200);
+		//450 -->起点200 与 -->终点200 距离相同  且与 下面的距离也相同 所以才会左右对称
+		//-50 --->起点200 与 -->终点200 距离相同
+		context.quadraticCurveTo(-50,110,200,500);
+		
+		context.shadowColor = "#D40137";
+		context.shadowBlur = 8;
+		context.fillStyle = "red";
+		//context.stroke();
+		context.fill();
+		
+		
+	//贝塞尔曲线 同时设置两个控制点 
+		context.beginPath();
+		context.moveTo(400,400);
+		//bezierCurveTo(控制点1x,控制点1y,控制点2x,控制点2y,终点x,终点y)
+		//bezierCurveTo(cpx,cpy,cpx2,cpx2,dx,dy)
+		context.bezierCurveTo(650,550,150,550,400,700);
+		context.fill();
+	</script>
+</html>

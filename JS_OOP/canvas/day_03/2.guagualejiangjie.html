@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>刮刮乐</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			#myCanvas {
+				position: absolute;
+				/*background-color: gainsboro;*/
+				z-index: 99;
+				transition: all 2s;
+			}
+			img {
+				position: absolute;
+				left: 100px;
+				top: 56px;
+			}
+			
+		</style>
+	</head>
+	<body>
+		<img src="7.jpeg"/>
+		<canvas id="myCanvas" width="800" height="451"></canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+		
+		//画布的背景色通过画上去 作为目标图像
+		context.beginPath();
+		context.fillStyle = "gainsboro";
+		context.fillRect(0,0,canvas.width,canvas.height);
+		context.globalCompositeOperation = "destination-out";
+		
+		
+		canvas.onmousedown = function(){
+			document.onmousemove = function(e){
+				var ev = e || window.event;
+				var x = ev.clientX;
+				var y = ev.clientY;
+				context.beginPath();
+				context.arc(x,y,20,0,2*Math.PI);
+				context.fill();	
+				alph();
+			}
+			document.onmouseup = function(){
+				document.onmousemove = null;
+			}
+		}
+		
+		//检测透明度屎不屎达到了一半
+		function alph(){
+			var imgdata = context.getImageData(0,0,canvas.width,canvas.height);
+			var arr = imgdata.data;
+			var time = 0;
+			for (var i = 0; i < arr.length; i+=4) {
+				//arr[i]//red
+				//arr[i+1]//green
+				//arr[i+2]//blue
+				//a 透明度 范围在0~255 获取是像素值是透明的像素，看它范围
+				//但如果需要设置半透明的效果还是需要将a的值设置在0~1之间
+				
+				if(arr[i+3] == 0){
+					time++;
+				}	
+			}
+			//一个像素点是有4个r g b a 值组成
+			//这里的arr 是指 a 值 除以4 就是有多少个像素点
+			//time 表示我们一共有多少个像素点透明了
+			if(arr.length/4/2 <= time){
+				canvas.style.opacity = 0;
+			}
+		}
+	</script>
+</html>

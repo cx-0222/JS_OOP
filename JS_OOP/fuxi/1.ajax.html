@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>ajax</title>
+	</head>
+	<body>
+	</body>
+	<script src="JQuery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+	/*
+		//1.jq的ajax 
+		$.ajax({
+			type:"get",
+			url:"1.ajax.php",
+			//发送请求时发送的数据
+			data:{
+				name:"cx"
+			},
+			//请求成功时调用的函数
+			success:function(data){
+				console.log("成功");
+				console.log(data);
+			},
+			//请求失败时调用的函数
+			error:function(errors){
+				console.log("失败");
+				console.log(errors);
+			}
+		});
+		*/
+		/*
+		//2.原生ajax
+		var ajax = false;
+		if (window.XMLHttpRequest) {
+			ajax = new XMLHttpRequest();
+		} else if(window.ActiveXObject){
+			ajax = new ActiveXObject("microsoft.XMLHTTP");
+		}
+		//ajax.open("get","1.ajax.php?name=cx");
+		ajax.open("post","1.ajax.php");
+		//post提交方式要设置HTTP头
+		ajax.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+		ajax.send("name=cw");
+		ajax.onreadystatechange = function(){
+			if (ajax.readyState == 4) {
+				if (ajax.status == 200) {
+					succeed(ajax.responseText);
+				}
+			}
+		}
+		
+		function succeed(data){
+			console.log("成功");
+			console.log(data);
+		}
+		*/
+		
+		//仿写jq的ajax
+		function ajax(obj){
+			var ajax = {};
+			if (window.XMLHttpRequest) {
+				ajax = new XMLHttpRequest();
+			} else if(window.ActiveXObject){
+				ajax = new ActiveXObject("microsoft.XMLHTTP");
+			}
+			
+			if (obj.type == "get") {
+				//当发送请的时候要发数据的时候 两种请求方式不同 数据拼接的方式也不一样
+				var urls = path(obj.data,obj.type,obj.url)
+				ajax.open("get",urls);
+				ajax.send();
+			} else if(obj.type == "post"){
+				var datas = path(obj.data,obj.type,obj.url)
+				ajax.open("post",obj.url);
+				ajax.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+				ajax.send(datas);
+			}
+			
+			ajax.onreadystatechange = function(){
+				if (ajax.readyState == 4) {
+					if (ajax.status == 200) {
+						obj.success(ajax.responseText);
+					} else{
+						obj.error();
+					}
+				}
+			}
+		}
+		
+		function path(obj,type,url){
+			var arr = [];
+			for (var keys in obj) {
+				var str = keys+"="+obj[keys];
+				arr.push(str);
+			}
+			var datas = arr.join("&");
+			if (type == "get") {
+				var urls = url+"?"+datas;
+				return urls;
+			} else if(type == "post"){
+				return datas;
+			}
+			
+		}
+//		console.log(path({
+//			name:"cx",
+//			password:1
+//		},"get","1.php"))
+		
+		
+		ajax({
+			type:"post",
+			url:"1.ajax.php",
+			data:{
+				name:"cx",
+				password:1
+			},
+			success:function(data){
+				console.log("成功");
+				console.log(data);
+			},
+			error:function(errors){
+				console.log("失败");
+				console.log(errors);
+			}
+		})
+	</script>
+</html>

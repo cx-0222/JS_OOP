@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>房产证</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			
+			body {
+				position: relative;
+			}
+			
+			input {
+				position: absolute;
+				z-index: 10;
+			}
+			
+			.user {
+				left: 177px;
+				top: 121px;
+				/*z-index: 0;*/
+			}
+			
+			.date {
+				left: 175px;
+				top: 209px;
+			}
+			
+			canvas {
+				position: absolute;
+				left: 0;
+				top: 0;
+				box-shadow: 0 0 2px darkgray;
+				/*z-index: 99;*/
+			}
+			
+			#btn {
+				position: absolute;
+				top: 400px;
+				left: 549px;
+			}
+			#a {
+				position: absolute;
+				left: 620px;
+				top: 400px;
+				text-decoration: none;
+				color: black;
+				font-size: 12px;
+				border: 1px solid #BABABA;
+				border-radius: 3px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<input class="user" type="text" />
+		<input class="date" type="text" />
+		<canvas id="myCanvas" width="549" height="412"></canvas>
+		<button id="btn">生成房产证</button>
+		<a id="a" href="">下载</a>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var cxt = canvas.getContext("2d");
+		var user = document.getElementsByClassName("user")[0];
+		var dates = document.getElementsByClassName("date")[0];
+		var btn = document.getElementById("btn");
+		var as = document.getElementById("a");
+		var img = new Image();
+		img.src = "1.jpg";
+
+		img.onload = function() {
+			cxt.drawImage(img, 0, 0);
+		}
+
+		function draw() {
+			var userText = user.value;
+			//console.log(userText);
+			var dateText = dates.value;
+			//var t = "陈馨";
+			cxt.font = "normal 12px arial #7C736C";
+			cxt.fillStyle = "#7C736C"
+			cxt.fillText(userText, user.offsetLeft, user.offsetTop);
+			
+			cxt.fillText(dateText, dates.offsetLeft, dates.offsetTop);
+			
+			var url = canvas.toDataURL();
+			as.href = url;
+			as.download = "fangchanzheng";
+		}
+		//draw()
+		btn.onclick = function() {
+			user.style.zIndex = 1;
+			canvas.style.zIndex = 99
+			draw();
+		}
+	</script>
+
+</html>

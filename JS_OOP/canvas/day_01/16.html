@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>重绘</title>
+	<style type="text/css">
+			#myCanvas {
+				border: 1px solid lightgray;
+				background-color: gainsboro;
+			}
+		</style>
+	</head>
+
+	<body>
+		<canvas id="myCanvas" width="500" height="500">
+			你的浏览器不支持canvas
+		</canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementsByTagName("canvas")[0];
+		canvas.width = 600;
+		canvas.height = 600;
+		var context = canvas.getContext("2d");
+
+
+		context.beginPath();
+		context.moveTo(300,100);
+		//context.quadraticCurveTo(200,200,起点,终点);
+		context.bezierCurveTo(400,200,200,200,300,300);
+		context.stroke();
+		context.fillStyle = "red";
+		context.fill();
+		
+		context.clearRect(0,0,canvas.width,canvas.height);
+		
+		
+		
+		
+		function Rect(x,y,width,height,color){
+			this.x = x;
+			this.y = y;
+			this.width = width;
+			this.height = height;
+			this.color = color;
+		}
+		
+		Rect.prototype.draw = function(){
+			context.beginPath();
+			context.rect(this.x,this.y,this.width,this.height);
+			context.fillStyle = this.color;
+			context.fill();
+		}
+		var rect1 = new Rect(100,100,50,50,"pink");
+		var times = setInterval(function(){
+			context.clearRect(0,0,canvas.width,canvas.height);
+			rect1.x += 2;
+			rect1.draw();	
+		},30);
+	</script>
+
+</html>

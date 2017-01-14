@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>获取百度数据</title>
+	</head>
+	<body>
+		<input type="text" name="inp" id="inp" value="" />
+		<ul id="uls"></ul>
+	</body>
+	<script type="text/javascript">
+		var inp = document.getElementById("inp");
+		var uls = document.getElementById("uls");
+		inp.oninput = function(){
+			console.log(this.value);
+			var url = "https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd="+this.value+"&cb=success";
+			var os = document.createElement("script");
+			os.src = url;
+			var oh = document.getElementsByTagName("head")[0];
+			oh.appendChild(os);
+			//删除发完请求的多余的script标签
+			oh.removeChild(os);
+		}
+		function success(data){
+			console.log(data);
+			uls.innerHTML = "";
+			for (var keys in data) {
+				if(keys == "s"){
+					for (var i = 0; i < data[keys].length; i++) {
+						var lis = document.createElement("li");
+						lis.innerHTML = data[keys][i];
+						uls.appendChild(lis);
+					}
+				}
+			}
+		}
+	</script>
+	<!--src 起的是引用效果-->
+	<!--<script src="https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd=a&cb=success" type="text/javascript" charset="utf-8">
+	</script>-->
+</html>

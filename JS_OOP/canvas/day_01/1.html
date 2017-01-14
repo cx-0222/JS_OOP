@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>canvas 基础</title>
+		<style type="text/css">
+			#myCanvas {
+				border: 1px solid lightgray;
+				/*background-color: gainsboro;*/
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="myCanvas" width="500" height="500">
+			你的浏览器不支持canvas
+		</canvas>
+		<script type="text/javascript">
+			var canvas = document.getElementsByTagName("canvas")[0];
+			//直接设置数字就可以
+			//canvas 的宽高是属性 不是样式 不是canvas.style.width
+			//用js来设置设置canvas的宽高
+			canvas.width = 600;
+			canvas.height = 600;
+			//获取我们的上下文 通俗来讲就是我们的画纸
+			var context = canvas.getContext("2d");
+			//开始一条路径
+			context.beginPath();
+			//设置绘制起点
+			context.moveTo(100,100);
+			//设置下一个点
+			context.lineTo(200,200);
+			//设置线的样式 必须在绘制之前
+			context.strokeStyle = "aquamarine";//颜色
+			context.lineWidth = 10;//线宽
+			//绘制线条
+			context.stroke();
+			
+			
+			
+			context.beginPath();//！！！开始一条新路径 每次重新划不相关的线的时候必须写 不然会误认为是同一个地方开始 
+			context.moveTo(300,100);
+			context.lineTo(300,400);
+			//strokeStyle lineWidth 设置的时画纸的属性 所以下面的线都会使用上一次设置的属性值 
+			context.strokeStyle = "olive";
+			context.lineWidth = 5
+			context.stroke();
+
+		</script>
+	</body>
+</html>

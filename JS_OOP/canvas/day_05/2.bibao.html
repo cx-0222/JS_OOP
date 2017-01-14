@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>闭包论</title>
+	</head>
+
+	<body>
+	</body>
+	<script type="text/javascript">
+		//例子1：
+		//闭包就是匿名函数的自调用；
+		var test = (function() {
+			console.log("test func");
+			var i = 0;
+			//想要访问某个函数内部的变量 那么就作为这个函数的子函数 即闭包
+			return function() {
+				console.log(i);
+				return i++;
+			}
+		})();
+
+		//1. 当没有任何调用的时候 也能自己调用自己 
+		//次数在于传入的参数(针对于for循环的循环变量)
+		//2 . 相当于给test绑定了一个匿名函数 
+		//所以在调用test()的时候就是在调用这个匿名函数
+		var a = test;
+		console.log(a); //function () {console.log(i);return i++;}
+		//3. 显示调用test()，实为调用内部的匿名函数
+		test(); //0
+		//4. ！！！！闭包函数里面的局部变量i不会随着调用的结束而被回收，
+		//而是一直保存在内存中 再次调用的时候 i 不会被重新声明
+		test(); //1
+		test(); //2
+
+		//例子2：
+		var test1 = function() {
+			console.log("test1 func");
+			var i = 0;
+			return function() {
+				console.log(i);
+				return i++;
+			}
+		}
+
+		//1. test1 不是立即调用的 需要显示调用test1()；
+		var a1 = test1;
+		console.log(a1); //包括内外两个函数
+		//2. 显示调用test1() 返回的是匿名函数的指向 此时 a11 指向内部的匿名函数
+		var a11 = test1();
+		console.log(a11); //test1()
+		//3. a11() 调用内部的匿名函数 局部变量i对于a来说 会常驻在内存内
+		a11(); //0
+		a11(); //1
+		//4. !!!!! 再次调用test1()的时候 b会返回一个新的匿名函数的拷贝
+		//并且 i 对于 b 也是唯一！
+		var b = test1();
+		b(); //0
+
+		//例子3：
+		var arr = [1, 2, 3];
+		var obj = {};
+		var test2 = function() {
+			console.log("test2 func");
+			for(var i = 0; i < arr.length; i++) {
+				(function(i) {
+					obj[i] = function() {
+						console.log(i);
+					}
+				})(i)
+			}
+		}
+		test2();
+		//obj[0],obj[1],obj[2] 表示里面的匿名方法 但并不执行这个方法里面的操作
+		var fn0 = obj[0];
+		var fn1 = obj[1];
+		var fn2 = obj[2];
+		console.log(fn0);
+		//调用匿名函数
+		//因为在匿名函数里使用i导致了变量的污染 所以传进去得i都是3
+		fn0(); //3
+		fn1(); //3
+		fn2(); //3
+		//使用闭包解决 
+		//!!!在for循环里创建了一个立即调用函数表达式 
+		//因为是i污染 所以在for循环下面创建 而不可以在obj[i]= 后面创建
+		//fn0 fn1 fn2 分别指向了匿名函数的引用(地址)
+		//fn0() fn1() fn2()分别调用了匿名函数，
+		//都访问了i 对于每一个调用 i都是唯一的
+		
+	//例子4：
+		var arr = [1,2,3];
+		//用来存放函数的数组
+		var fns = [];
+		var add = function(){
+			for (var i = 0; i < arr.length; i++) {
+				(function(i){
+					//把匿名函数push到fns中
+					fns.push(function(){
+						//由于函数引用了上层作用域的i 当被调用时i值不会被改变
+						console.log(arr[i]);
+					})
+				})(i)
+			}
+		}
+		//遍历fns执行数组中的函数
+		var start = function(){
+			for (var i = 0; i < fns.length; i++) {
+				//执行fns中的匿名函数
+				fns[i]();
+				//console.log(fns[i]);
+			}
+		}
+		add();
+		start();
+	</script>
+
+</html>

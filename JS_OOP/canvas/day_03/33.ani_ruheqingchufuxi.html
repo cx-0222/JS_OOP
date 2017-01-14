@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			#myCanvas {
+				box-shadow: 0 0 2px red;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="myCanvas" width="600" height="600"></canvas>
+		<button onclick="stops()">暂停</button>
+		<button onclick="starts()">开始</button>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+		//用面向对象写动画
+		
+		//1. 构造函数
+		function Rect(x,y,w,h,color,speedX,speedY){
+			this.x = x;
+			this.y = y;
+			this.w = w;
+			this.h = h;
+			this.color = color;
+			this.speedX = speedX;
+			this.speedY = speedY;
+		}
+		//2. 给对象设置方法
+		Rect.prototype.draw = function(){
+			context.fillStyle = this.color;
+			context.fillRect(this.x,this.y,this.w,this.h);
+		}
+		Rect.prototype.move = function(){
+			if (this.x + this.w >= canvas.width || this.x <= 0) {
+				this.speedX = (-1) * this.speedX;
+			}
+			if(this.y + this.h >= canvas.height || this.y <= 0){
+				this.speedY = (-1) * this.speedY;
+			}
+			this.x += this.speedX;
+			this.y += this.speedY;
+		}
+		
+		
+	
+		var rectArr = [];
+		for(var i = 0; i < 50; i++){
+			var x = rand(1,100);
+			var y = rand(1,100);
+			var w = h = rand(20,40);
+			var rr = rand(0,255);
+			var gg = rand(0,255);
+			var bb = rand(0,255);
+			var speedX = rand(1,10);
+			var speedY = rand(1,10);
+			var color = "rgb("+ rr + "," + gg + "," + bb + ")";
+			//!!!由构造函数来创建对象！！要用new 
+			var rects = new Rect(x,y,w,h,color,speedX,speedY);
+			rectArr.push(rects);
+		}
+		//动画
+		var timer;
+		function ani(){
+			context.clearRect(0,0,canvas.width,canvas.height);
+			for (var i = 0; i < rectArr.length; i++) {
+				rectArr[i].draw();
+				rectArr[i].move();
+			}
+			//rect1.draw();
+			//rect1.move();
+			timer = window.requestAnimationFrame(ani);
+		}
+		ani();
+		function rand(min,max){
+			return parseInt(Math.random()*(max-min)+min);
+		}
+		
+		function stops(){
+			//停止由帧动画创建的动画
+			window.cancelAnimationFrame(timer);
+		}
+		function starts(){
+			ani();
+		}
+	</script>
+</html>

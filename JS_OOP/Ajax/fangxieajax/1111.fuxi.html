@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>仿写jq的ajax</title>
+	</head>
+	<body>
+	</body>
+	<script src="../day_01/JQuery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+	//可以看做给$方法再添加了一个方法ajax 这个方法的参数是对象
+//		$.ajax({
+//			type:"get",
+//			url:"",
+//			data:{
+//				name:"cx",
+//				password:1
+//			},
+//			success:function(data){
+//				
+//			},
+//			error:function(errors){
+//				
+//			}
+//		});
+		
+	//1.创建ajax方法
+	function ajax(obj){
+		//2.创建一个对象
+		var ajax = {};
+		if(window.XMLHttpRequest){
+			ajax = new XMLHttpRequest();
+		}else if(window.ActiveXObject){
+			ajax = new ActiveXObject("microsoft.XMLHTTP");
+		}
+		//3.创建一个请求 先判断请求的类型
+		if (obj.type == "get") {
+			//当要数据的时候
+			//get 直接在url后面 用？拼接 name=cx&password=11
+			//借助辅助函数
+			var urls = path(obj.data,obj.type,obj.url)
+			ajax.open("get",urls);
+			ajax.send();
+		} else if(obj.type == "post"){
+			//post 直接在send加入name=cx&password=11
+			var datas = path(obj.data,obj.type,obj.url);
+			ajax.open("post",obj.url);
+			ajax.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+			ajax.send(datas);
+		}
+		//4.判断
+		ajax.onreadystatechange = function(){
+			if (ajax.readyState == 4) {
+				if (ajax.status == 200) {
+					obj.success(ajax.responseText);
+				}else{
+					obj.error();
+				}
+			}
+		}
+	}
+	
+	function path(obj,type,url){
+		//对传进来的data对象进行处理
+		var arr = [];
+		for (var keys in obj) {
+			//得到name=cx   password=1
+			var str = keys+"="+obj[keys];
+			//要求得到 name=cx&password=1
+			arr.push(str);//["name=cx","password=1"]
+		}
+		//将数组换成用&连接的字符串
+		var datas = arr.join('&');
+		//console.log(datas);
+		//判断请求方式
+		if (type == "get") {
+			var urls = url+"?"+datas;
+			return urls;
+		} else if(type == "post"){
+			return datas;
+		}
+	}
+//	console.log(path({
+//		name:"cx",
+//		password:1
+//	},"get","1.php"))
+	ajax({
+			type:"post",
+			url:"11111.php",
+			data:{
+				name:"cx",
+				password:11
+			},
+			success:function(data){
+				console.log("成功");
+				console.log(data);
+			},
+			error:function(errors){
+				console.log(errors);
+			}
+		})
+	</script>
+</html>

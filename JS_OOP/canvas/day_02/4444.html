@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>白天知识点复习</title>
+		<style type="text/css">
+			canvas {
+				box-shadow: 0 0 2px gainsboro;
+			}
+		</style>
+	</head>
+	<body>
+		
+		<canvas id="myCanvas" width="600" height="600"></canvas>
+		<a id="a" href="">aaaaa</a>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+		var a = document.getElementById("a");
+	//图形的输出
+		//在画布绘制的东西是图片 是可以输出的
+		context.fillRect(100,100,300,200);
+		//获取图片的链接
+		var url = canvas.toDataURL();
+		//可以链接到那
+		a.href = url;
+		
+	</script>
+</html>

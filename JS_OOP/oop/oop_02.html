@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>构造函数</title>
+	</head>
+	<body>
+	</body>
+	<script type="text/javascript">
+		//① 工厂模式内部需要创建对象 而构造函数内部不需要
+		//② this 代表当前要创建的对象
+		
+		function Student(name,age){
+			this.name = name;
+			this.age = age;
+			
+			this.info = function(){
+				console.log("我叫"+this.name+"，我今年"+this.age+"岁了");
+			}
+			
+			this.say = function(){
+				console.log("hi friend");
+			}
+			this.say();
+			this.info();
+		}
+		
+		
+		
+		//通过构造函数创建对象 
+		var student1 = new Student("cx",21);
+		var student2 = new Student("cxx",20);
+	</script>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>原生ajax</title>
+		<style type="text/css">
+			.oDiv {
+				width: 100px;
+				height: 100px;
+				background-color: olive;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="oDiv"></div>
+	</body>
+	<script type="text/javascript">
+		var oDiv = document.getElementsByClassName("oDiv")[0];
+		//1.创建XMLHTTPrequest对象
+		var ajax = false;
+		//!!注意兼容
+		if (window.XMLHttpRequest) {
+			ajax = new XMLHttpRequest();
+		} else if(window.ActiveXObject){
+			//!!!!
+			ajax = new ActiveXObject("microsoft.XMLHTTP");
+		}
+		//2.创建一个请求
+		ajax.open("get","333.fuxi_yuansheng_get.php?name=cx");
+		//3.发送一个请求
+		ajax.send();
+		//4.判断请求状态
+		ajax.onreadystatechange = function(){
+			//5.判断请求zhuangt
+			if(ajax.readyState == 4){
+				//6.判断请求结果
+				if(ajax.status == 200){
+					oDiv.onclick = function(){
+						oDiv.innerHTML = succeed(ajax.responseText);
+					} 
+				}
+			}
+		}
+		
+		function succeed(data){
+			//console.log(data);
+			return data;
+		}
+	</script>
+</html>

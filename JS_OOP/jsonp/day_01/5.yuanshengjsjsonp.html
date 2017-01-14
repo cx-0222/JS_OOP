@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+	</body>
+	<script type="text/javascript">
+		
+		function ajax(obj) {
+			
+			if (obj.dataType == "jsonp") {
+				var names = "jQuery";
+				//获取随机数字 去掉前两位
+				var num = String(Math.random()).substring(2);
+				//console.log(num);
+				names += num;
+				var newDate = new Date();
+				var times = newDate.getTime();
+				names = names+"_"+times;
+				//console.log(names);
+				
+				//回调函数
+				window[names] = obj.success;
+				var os = document.createElement("script");
+				var url = path(obj.data,"get",obj.url)+"&"+obj.jsonp+"="+names;
+				//console.log(url);
+				os.src = url;
+				var oh = document.getElementsByTagName("head")[0];
+				oh.appendChild(os);
+				oh.removeChild(os);
+				//后面的代码就不会在执行了
+				return;
+			}
+			var ajax = {};
+			if(window.XMLHttpRequest) {
+				ajax = new XMLHttpRequest();
+			} else if(window.ActiveXObject) {
+				ajax = new ActiveXObject("microsoft.XMLHTTP");
+			}
+			if(obj.type == "get") {
+				var url = path(obj.data,obj.type,obj.url);
+				ajax.open("get",url);
+				ajax.send();
+			} else if(obj.type == "post") {
+				var datas = path(obj.data,obj.type,obj.url);
+				ajax.open("post",obj.url);
+				ajax.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+				ajax.send(datas);
+			}
+			ajax.onreadystatechange = function() {
+				//5.判断请求zhuangt
+				if(ajax.readyState == 4) {
+					//6.判断请求结果
+					if(ajax.status == 200) {
+						obj.succeed(ajax.responseText);
+					}else{
+						obj.error();
+					}
+				}
+			}
+		}
+		function path(obj,type,url){
+			var arr = [];
+			for (var keys in obj) {
+				var str = keys+"="+obj[keys];
+				arr.push(str);
+			}
+			var datas = arr.join("&");
+			if (type == "get") {
+				var urls = url+"?"+datas;
+				return urls;
+			} else if(type == "post"){
+				return datas;
+			}
+		}
+	
+		ajax({
+			url:"http://10.80.8.229/JS_OOP/jsonp/day_01/5.yuanshengjsjsonp.php",
+			dataType:"jsonp",
+			data:{
+				user:"cx"
+			},
+			jsonp:"ccc",
+			success:function(data){
+				console.log("成功");
+				console.log(data);
+			}
+		})
+	</script>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Jq_Ajax_get方式</title>
+		<style type="text/css">
+			
+			#content {
+				width: 100px;
+				height: 100px;
+				background-color: burlywood;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="content">
+			<ul id="oUl"></ul>
+		</div>
+	</body>
+	<script src="JQuery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		var oDiv = document.getElementById("content");
+		var oUl = document.getElementById("oUl");
+		oDiv.onclick = function() {
+			//异步： 不用转跳到php文件也能获取php文件输出的内容
+			//!!!只能捕获php文件输出的内容
+			$.ajax({
+				//提交请求的方式
+				type: "get",
+				//请求接口
+				url: "222.fuxi_get.php",
+				//async 异步 ajax默认为true
+				//async:true
+				//传给php的数据
+				data: {
+					name: "cx",
+					userId:1
+				},
+				//请求成功调用的方法
+				//data表示传回来的数据
+				success: function(data) {
+					//console.log("成功");
+					//console.log(data);
+					//将获取的数据在前端展示 点击div 显示数据
+					//oDiv.innerHTML = data;
+					//将php传过来的json字符串变为json对象
+					var obj = JSON.parse(data);
+					//console.log(obj);//数组 四个对象
+					for (var i = 0; i < obj.length; i++) {
+						//console.log(obj[i].name);
+						//jq创建节点
+						var li = $("<li>"+obj[i].name+"</li>");
+						$(oUl).append(li);
+					}
+				},
+				//请求失败调用的方法
+				//errors表示错误信息
+				error: function(errors) {
+					console.log("失败");
+					console.log(errors);
+				}
+			});
+		}
+	</script>
+
+</html>

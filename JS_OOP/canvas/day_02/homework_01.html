@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>贝塞尔曲线</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			
+			#myCanvas {
+				background-color: gainsboro;
+			}
+			
+			button {
+				width: 20px;
+				height: 20px;
+				border-radius: 50%;
+				border: none;
+				position: absolute;
+				outline: none;
+			}
+			
+			#qiu1 {
+				background: #FF0088;
+				left: 90px;
+				top: 90px;
+			}
+			
+			#qiu2 {
+				background: #00AABB;
+				left: 490px;
+				top: 490px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<button id="qiu1"></button>
+		<button id="qiu2"></button>
+		<canvas id="myCanvas" width="600" height="600"></canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+		var qiu1 = document.getElementById("qiu1");
+		var qiu2 = document.getElementById("qiu2");
+
+		//将  qiu1 qiu2 都看做一个对象 贝塞尔线的位置 由小球控制
+		//创建构造函数
+		function Bezier(qiu1X, qiu1Y, qiu2X, qiu2Y) {
+			this.qiu1 = {};
+			this.qiu2 = {};
+			//给对象设置属性
+			this.qiu1.x = qiu1X;
+			this.qiu2.x = qiu2X;
+			this.qiu1.y = qiu1Y;
+			this.qiu2.y = qiu2Y;
+		}
+		Bezier.prototype.draw = function() {
+			//绘制背景
+			context.beginPath();
+			context.fillStyle = "skyblue";
+			context.fillRect(100, 100, 400, 400);
+
+			//绘制小球线
+			context.save();
+			context.beginPath();
+			context.moveTo(100, 500);
+			context.lineTo(this.qiu1.x, this.qiu1.y);
+			//console.log(this.qiu1.x, this.qiu1.y);
+			context.strokeStyle = "red";
+			context.stroke();
+
+			context.beginPath();
+			context.moveTo(500, 100);
+			context.lineTo(this.qiu2.x, this.qiu2.y);
+			context.stroke();
+
+			context.restore();
+
+			//绘制贝塞尔曲线
+			context.save();
+			context.beginPath();
+			context.moveTo(100, 500);
+			context.bezierCurveTo(this.qiu1.x, this.qiu1.y, this.qiu2.x, this.qiu2.y, 500, 100);
+			context.strokeStyle = "black";
+			context.lineWidth = 6;
+			context.stroke();
+			context.restore();
+		}
+		var bezier = new Bezier(100, 100, 500, 500);
+		console.log(bezier)
+		bezier.draw();
+
+		//		qiu1.onmousedown = function(e){
+		//			document.onmousemove = function(e){
+		//				var ev = e || window.event;
+		//				//鼠标一直在小球的中心
+		//				qiu1.style.left = ev.clientX - 10 +  "px";
+		//				qiu1.style.top = ev.clientY - 10 + "px";
+		//				//获取鼠标的位置 也就是小球中心的位置 重绘 小球线
+		//				var x = ev.clientX ;
+		//				var y = ev.clientY ;
+		//				//将其赋值给对象的对象的相关属性
+		//				bezier.qiu1.x = x;
+		//				bezier.qiu1.y = y;
+		//				//重绘前先清空上一次的
+		//				context.clearRect(0,0,canvas.width,canvas.height);
+		//				bezier.draw();
+		//			}
+		//		}
+		//		
+		//		
+		//		qiu2.onmousedown = function(e){
+		//			document.onmousemove = function(e){
+		//				var ev = e || window.event;
+		//				//鼠标一直在小球的中心
+		//				qiu2.style.left = ev.clientX - 10 +  "px";
+		//				qiu2.style.top = ev.clientY - 10 + "px";
+		//				//获取鼠标的位置 也就是小球中心的位置 重绘 小球线
+		//				var x = ev.clientX ;
+		//				var y = ev.clientY ;
+		//				//将其赋值给对象的对象的相关属性
+		//				bezier.qiu2.x = x;
+		//				bezier.qiu2.y = y;
+		//				//重绘前先清空上一次的
+		//				context.clearRect(0,0,canvas.width,canvas.height);
+		//				bezier.draw();
+		//			}
+		//		}
+
+		//qiu1.onmousedown = move;
+		//qiu2.onmousedown = move;
+
+		//function move(){
+		qiu1.onmousedown = qiu2.onmousedown = function() {
+			var _this = this;
+			document.onmousemove = function(e) {
+				var ev = e || window.event;
+				//鼠标一直在小球的中心
+				_this.style.left = ev.clientX - 10 + "px";
+				_this.style.top = ev.clientY - 10 + "px";
+				//获取鼠标的位置 也就是小球中心的位置 重绘 小球线
+				var x = ev.clientX;
+				var y = ev.clientY;
+				if(_this.id == "qiu1") {
+					//将其赋值给对象的对象的相关属性
+					bezier.qiu1.x = x;
+					bezier.qiu1.y = y;
+				} else if(_this.id == "qiu2") {
+					bezier.qiu2.x = x;
+					bezier.qiu2.y = y;
+				}
+
+				//重绘前先清空上一次的
+				context.clearRect(0, 0, canvas.width, canvas.height);
+				bezier.draw();
+			}
+		}
+		document.onmouseup = function() {
+			document.onmousemove = null;
+		}
+	</script>
+
+</html>

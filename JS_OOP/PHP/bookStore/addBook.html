@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>addBook</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			.box {
+				text-align: center;
+			}
+			.wrap {
+				position: relative;
+				width: 80%;
+				margin: 0 auto;
+				height: 640px;
+				border-bottom: 1px solid black;
+			}
+			
+			h1 {
+				position: absolute;
+				left: 625px;
+				top: 80px;
+				font-weight: bold ;
+			}
+			
+			input {
+				position: absolute;
+			}
+			
+			#name {
+				/*border-style: none;*/
+				border: 2px solid #D6D6D6;
+				border-radius: 5px;
+				width: 600px;
+				height: 35px;
+				left: 405px;
+				top: 150px;
+				
+			}
+			#span1{
+				position: absolute;
+				left: 350px;
+				top: 160px;
+			}
+			#description {
+				border: 2px solid #D6D6D6;
+				border-radius: 5px;
+				width: 600px;
+				height: 35px;
+				left: 405px;
+				top: 205px;
+			}
+			#span2{
+				position: absolute;
+				left: 350px;
+				top: 215px;
+			}
+			#baseprice {
+				border: 2px solid #D6D6D6;
+				border-radius: 5px;
+				width: 600px;
+				height: 35px;
+				left: 405px;
+				top: 260px;
+			}
+			#span3{
+				position: absolute;
+				left: 350px;
+				top: 270px;
+			}
+			#writer {
+				border: 2px solid #D6D6D6;
+				border-radius: 5px;
+				width: 600px;
+				height: 35px;
+				left: 405px;
+				top: 315px;
+			}
+			#span4{
+				position: absolute;
+				left: 350px;
+				top: 325px;
+			}
+			#publish {
+				border: 2px solid #D6D6D6;
+				border-radius: 5px;
+				width: 600px;
+				height: 35px;
+				left: 405px;
+				top: 370px;
+			}
+			#span5{
+				position: absolute;
+				left: 335px;
+				top: 380px;
+			}
+			#pages {
+				border: 2px solid #D6D6D6;
+				border-radius: 5px;
+				width: 600px;
+				height: 35px;
+				left: 405px;
+				left: 405px;
+				top: 425px;
+			}
+			#span6{
+				position: absolute;
+				left: 350px;
+				top: 435px;
+			}
+			#images {
+				left: 405px;
+				top: 480px;
+			}
+			#span7{
+				position: absolute;
+				left: 320px;
+				top: 480px;
+			}
+			#btn {
+				left: 405px;
+				top: 525px;
+			}
+			/*头部*/
+			.navWarp {
+				width: 100%;
+				height: 4.2em;
+				background-color: #222222;
+			}
+			.nav {
+				width: 60%;
+				height: 100%;
+				/*background-color: red;*/
+				margin: 0 auto;
+			}
+			.nav_ul {
+				list-style: none;
+				text-align: center;
+				
+			}
+			.nav_ul li{
+				height: 65px;
+				width: 17%;
+				display: inline-block;
+				/*margin: 4% 2%*/;
+				line-height: 65px;
+				
+			}
+			.nav_ul li a{
+				text-decoration: none;
+				color: #939393;
+				font-size: 20px;
+			}
+			.index:hover {
+				color: white;
+			}
+			.addbook:hover {
+				color: white;
+			}
+			.shCar:hover {
+				color: white;
+			}
+			.login:hover {
+				color: white;
+			}
+			.registe:hover {
+				color: white;
+			}
+			/*.status {
+				text-decoration: none;
+				color: #939393;
+			}
+			.cancel {
+				text-decoration: none;
+				color: #939393;
+			}*/
+		</style>
+	</head>
+
+	<body>
+		<div class="navWarp">
+				<div class="nav">
+					<ul class="nav_ul">
+						<li ><a class="index" href="index.php" >书城首页</a></li>
+						<li><a class="addbook" href="addBook.html" style="color: white;">添加图书</a></li>
+						<li><a class="shCar" href="shopCar.php">购物车</a></li>
+						<li><a class="login" href="login.php">登录</a></li>
+						<li><a class="registe" href="registe.php">注册</a></li>
+						<!--<a class="status" href="">未登录</a>
+						<a class="cancel" href="cancel.php">注销</a>-->
+					</ul>
+				</div>
+		</div>
+		<div class="box">
+			<div class="wrap">
+				<h1>添加图书</h1>
+				<form action="addBook.php" method="get">
+				<span id="span1">书名：</span><input type="text" name="name" id="name" value="" placeholder=" 书名"/> 
+				<span id="span2">简介：</span><input type="text" name="description" id="description" value="" placeholder=" 简介"/> 
+				<span id="span3">价格：</span><input type="text" name="baseprice" id="baseprice" value="" placeholder=" 价格"/>
+				<span id="span4">作者：</span><input type="text" name="writer" id="writer" value="" placeholder=" 作者"/>
+				<span id="span5">出版社：</span><input type="text" name="publish" id="publish" value="" placeholder=" 出版社"/>
+				<span id="span6">页码：</span><input type="text" name="pages" id="pages" value="" placeholder=" 页码"/>
+				<span id="span7">书籍图片：</span><input type="file" name="images" id="images" placeholder=" 书籍图片"/>
+				<input type="submit" value="保存" id="btn" />
+				</form>
+			</div>
+		</div>
+
+	</body>
+
+</html>

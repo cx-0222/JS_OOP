@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>canvas矩形 方法</title>
+		<style type="text/css">
+			#myCanvas {
+				border: 1px solid lightgray;
+				/*background-color: gainsboro;*/
+			}
+		</style>
+	</head>
+
+	<body>
+		<canvas id="myCanvas" width="500" height="500">
+			你的浏览器不支持canvas
+		</canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementsByTagName("canvas")[0];
+		canvas.width = 600;
+		canvas.height = 600;
+		var context = canvas.getContext("2d");
+		
+		//fillRect(x,y,width,height) 方法绘制“已填色”的矩形。默认的填充颜色是黑色。
+			//x	矩形左上角的 x 坐标
+			//y	矩形左上角的 y 坐标
+			//width	矩形的宽度，以像素计
+			//height	矩形的高度，以像素计
+		context.fillStyle = "aquamarine"
+		context.fillRect(100,200,300,100);
+		
+		context.beginPath();
+		context.rect(300,400,200,100);
+		context.fill();//rect()方法要手动填充
+	</script>
+
+</html>

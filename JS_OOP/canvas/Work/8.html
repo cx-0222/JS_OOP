@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>贪食蛇</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			.wrap {
+				margin-left: 30px;
+				margin-top: 15px;
+				width: 1300px;
+				height: 800px;
+				/*border: 1px solid black;*/
+				position: relative;
+			}
+			
+			 button {
+			 	font: normal 30px/80px "微软雅黑";
+			 	width: 280px;
+			 	height: 80px;
+			 	position: absolute;
+			 	color: white;
+			 	background-color: #1ABC9C;
+			 	outline: none;
+			 	border: none;
+			 }
+			  button:nth-child(1){
+			 	top: 0;
+			 	background-color: #F2F2F2;
+			 	color: black;
+			 }
+			 button:nth-child(2){
+			 	top: 90px;
+			 	#F2F2F2
+			 }
+			  button:nth-child(3){
+			 	top: 180px;
+			 }
+			  button:nth-child(4){
+			 	top: 270px;
+			 }
+			  button:nth-child(5){
+			 	top: 360px;
+			 }
+			 canvas {
+			 	border: 1px solid red;
+			 	position: absolute;
+				right: 0;
+				top: 0;			 	
+			 }
+		</style>
+	</head>
+	<body>
+		<div class="wrap">
+			<button class="btn">Eaten :</button>
+			<button class="btn">Wall:OFF</button>
+			<button class="btn">Speed:Slow</button>
+			<button class="btn">Stone:ON</button>
+			<button class="btn">Pause</button>
+			<canvas id="myCanvas" width="1000" height="800"></canvas>
+		</div>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+		var btns = document.getElementsByClassName("btn");
+		//console.log(btns)
+	
+		//全局变量
+		var snake = null;
+		var snakeNode_length = 50;
+		var snake_size = 6;
+		var snake_direction = null;
+		var snake_direction_lock = false;
+		var delay = 300;
+		var interval = null;
+		
+		var stage_map = null;
+		var score = 0;
+		
+		//
+		var stage_margin = 0;
+		var stage_x_count = 0;
+		var stage_y_count = 0;
+		var stage_width = 0;
+		var stage_height = 0;
+		
+		var allow_inwall = true;
+		var game_status = true;
+		var allow_stone = true;
+		
+		
+		function initPanel(){
+			stage_margin = 300;	
+		}
+		
+		function initButtons(){
+			
+			if(allow_inwall){
+				allow_inwall = false;
+				btns[1].innerHTML = "Wall:OFF";
+			}else{
+				allow_inwall = true;
+				btns[1].innerHTML = "Wall:ON";
+			}
+			
+			
+			if(allow_stone){
+				allow_stone = false;
+				btns[3].innerHTML = "Stone:OFF";
+			}else{
+				allow_stone = true;
+				btns[3].innerHTML = "Stone:ON";
+			}
+			
+			
+			
+			
+		}
+	</script>
+</html>

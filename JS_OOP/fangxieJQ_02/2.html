@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<script src="js/JQuery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+		<style type="text/css">
+			#outer {
+				width: 50px;
+				height: 50px;
+				background-color: dodgerblue;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="outer"></div>
+	</body>
+	<script type="text/javascript">
+	//on 方法可以同时两个甚至多个事件绑定同一个方法
+		$("#outer").on("mouseup mousedown",function(){
+			console.log("hahaha");
+			console.log("!");
+		})
+	</script>
+</html>

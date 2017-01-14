@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<title>小样来挑战</title>
+		<link rel="stylesheet" href="css/swiper.min.css">
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			
+			html,
+			body,
+			.wrap {
+				width: 100%;
+				height: 100%;
+			}
+			
+			.wrap {
+				overflow: hidden;
+			}
+			
+			
+			.firstPage {
+				width: 100%;
+				height: 100%;
+				position: relative;
+			}
+			.bg {
+				position: absolute;
+				z-index: 1;
+			}
+			.start {
+				position: absolute;
+				left: 62px;
+				top:560px;
+				width: 250px;
+				height: auto;
+				z-index: 10;
+			}
+			.start_down {
+				display: none;
+				position: absolute;
+				left: 62px;
+				top:560px;
+				width: 250px;
+				height: auto;
+				z-index: 10;
+			}
+			.secondPage {
+				width: 100%;
+				height: 100%;
+				position: relative;
+				display: none;
+			}
+			
+			.changeP{
+				position: absolute;
+				left: 62px;
+				top:560px;
+				width: 250px;
+				height: auto;
+				z-index: 10;
+			}
+			.changeP_down{
+				display: none;
+				position: absolute;
+				left: 62px;
+				top:560px;
+				width: 250px;
+				height: auto;
+				z-index: 10;
+			}
+			
+			.per-wrap {
+				width: 300px;
+				height: 400px;
+				position: relative;
+				/*border: 1px solid black;*/
+			}
+			.per1, .per2, .per3, .per4, .per5 {
+				/*position: absolute;
+				left: 120px;
+				top: 70px;
+				height: 300px;
+				width: auto;
+				z-index: 30;*/
+				width: 40%;
+				margin-right: 100%;
+				margin-top: 70px;
+			}
+			.player {
+				position: absolute;
+				width: 65px;
+				height: auto;
+				top: 420px;
+				z-index: 10;
+			}
+			.p1 {
+				left:10px;
+			}
+			.p2 {
+				left:85px;
+			}
+			.p3 {
+				left:158px;
+			}
+			.p4 {
+				left:232px;
+			}
+			.p5 {
+				left:305px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="wrap">
+			<div class="gameBox">
+				<div class="firstPage">
+					<!--背景-->
+					<img class="bg" src="img/bg.png"/>
+					<img class="start" src="img/start.png"/>
+					<img class="start_down" src="img/start_down.png"/>
+				</div>
+				<div class="secondPage">
+					<img class="bg" src="img/bg_2.png"/>
+					<img class="changeP" src="img/changeP.png"/>
+					<img class="changeP_down" src="img/changeP_down.png"/>
+					<img class="player p1" src="img/1.png"  />
+					<img class="player p2" src="img/2.png"  />
+					<img class="player p3" src="img/3.png"  />
+					<img class="player p4" src="img/4.png"  />
+					<img class="player p5" src="img/5.png"  />
+					
+					<div class="swiper-container">
+						<div class="swiper-wrapper per-wrap">
+							<img class="swiper-slide per1" src="img/per1.png"/>
+							<img class="swiper-slide per2" src="img/per2.png"/>
+							<img class="swiper-slide per3" src="img/per3.png"/>
+							<img class="swiper-slide per4" src="img/per4.png"/>
+							<img class="swiper-slide per5" src="img/per5.png"/>
+						</div>
+						<div class="swiper-button-next"></div>
+        					<div class="swiper-button-prev"></div>
+					</div>
+					
+				</div>
+				 	
+			</div>
+	
+		</div>
+		
+	</body>
+	<script src="js/swiper.min.js"></script>
+	<script src="js/JQuery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+//		var swiper = new Swiper('.swiper-container', {
+//	        pagination: '.swiper-pagination',
+//	        paginationClickable: true,
+//	        spaceBetween: 30,
+//  		});
+    		
+    		var swiper = new Swiper('.swiper-container', {
+        pagination: '.swiper-pagination',
+        slidesPerView: 1,
+        paginationClickable: true,
+        spaceBetween: 30,
+        keyboardControl: true,
+        nextButton: '.swiper-button-next',
+        prevButton: '.swiper-button-prev',
+    });
+		var gameBox = document.getElementsByClassName("gameBox")[0];
+		var firstPage = document.getElementsByClassName("firstPage")[0];
+		var bg = document.getElementsByClassName("bg");
+		var start = document.getElementsByClassName("start")[0];
+		var start_down = document.getElementsByClassName("start_down")[0];
+		var secondPage = document.getElementsByClassName("secondPage")[0];
+		function loading(objImg, obj) {
+			//求出要加载图片的数量
+			var length = 0;
+			for(var i in objImg) {
+				length++;
+			}
+
+			//存放图片对象
+			var imgObj = {};
+			//记录加载好了多少张
+			var num = 0;
+			for(var keys in objImg) {
+				//将要加载好的图片变为图片对象 因为后面会用到
+				var img = new Image();
+				img.src = objImg[keys];
+				//只有图片加载好了才可以存放进imgObj
+				//这里是在for循环内部用函数 涉及了变量污染问题 
+				//用闭包解决
+				img.onload = (function(keys, img) {
+					//这里的this 指window 因为此时执行的还是自执行函数function(keys,img)
+					//它的执行者为window
+					return function() {
+						//相当于给img.onload 绑定了这个匿名函数 真正的执行者是当前加载的img 
+						//所以img 可以不传 用this代替 
+						num++;
+						//插入imgObj中
+						imgObj[keys] = img;
+						//图片加载的进度 用进度来决定调用哪个函数
+						var loads = num / length;
+						//加载函数 当进度发生变化时调用的函数
+						if(obj.load) {
+							//安全处理 哪怕不需要这个函数也不会报错
+							//!!!!
+							obj.load(loads);
+						}
+						//表示所有图片加载完毕 loads来表示
+						if(num >= length) {
+							if(obj.complete) {
+								obj.complete(imgObj);
+							}
+						}
+					}
+				})(keys, img)
+			}
+		}
+		loading({
+			"bg": "img/bg.png",
+			"start_down": "img/start_down.png",
+			"start": "img/start.png"	,
+			"bg_2":"img/bg_2.png",
+			"1":"img/1.png",
+			"2":"img/2.png",
+			"3":"img/3.png",
+			"4":"img/4.png",
+			"5":"img/5.png",
+			"per1":"img/per1.png"
+		}, {
+			complete: main,
+			load: load
+		})
+		function load(loads){
+			console.log(loads);
+		}
+		function main(imgObj){
+			//获取当前设备的宽高
+			var windowWidth = document.documentElement.clientWidth;
+			var windowHeight = document.documentElement.clientHeight;
+			console.log(windowWidth);
+			console.log(windowHeight);
+			gameBox.style.width = windowWidth+"px";
+			gameBox.style.height = windowHeight+"px";
+			for (var i = 0; i < bg.length; i++) {
+				bg[i].style.width = windowWidth+"px";
+				bg[i].style.height = windowHeight+"px";
+			}
+			
+			
+			start.onclick = function(){
+				start.style.display = "none";
+				start_down.style.display = "block";
+				firstPage.style.display = "none";
+				secondPage.style.display = "block";
+			}
+			
+			
+		}
+	</script>
+
+</html>

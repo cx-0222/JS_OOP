@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>太极</title>
+		<style type="text/css">
+			#myCanvas {
+				border: 1px solid lightgray;
+				background-color: gainsboro;
+			}
+		</style>
+	</head>
+
+	<body>
+		<canvas id="myCanvas" width="500" height="500">
+			你的浏览器不支持canvas
+		</canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementsByTagName("canvas")[0];
+		canvas.width = 600;
+		canvas.height = 600;
+		var context = canvas.getContext("2d");
+
+		//arc() 方法创建弧/曲线（用于创建圆或部分圆）。
+		//context.arc(x,y,r,sAngle,eAngle,counterclockwise);
+		//x	圆的中心的 x 坐标。
+		//y	圆的中心的 y 坐标。
+		//r	圆的半径。
+		//sAngle	起始角，以弧度计。!!!!!!（弧的圆形的三点钟位置是 0 度）。
+		//eAngle	结束角，以弧度计。
+		//counterclockwise	可选。规定应该逆时针还是顺时针绘图。False = 顺时针，true = 逆时针。 默认顺时针
+
+		//Math.PI 代表180度 
+		//1度
+
+		//在我们进行绘制圆形的时候 因为要涉及到弧度
+		//所以要知道0°在时钟的三点钟方向
+		//如果度数增加就是需要按照顺时针进行增加
+		//如果度数减小就是往逆时针方向进行
+
+		//上圆1
+		var deg = Math.PI / 180;
+		context.arc(300, 300, 300, 0, 180 * deg, true);
+		context.fill();
+
+		//下圆1
+		context.beginPath()
+		context.arc(300, 300, 300, 0, 180 * deg, false);
+		context.fillStyle = "white"
+		context.fill();
+
+		//上圆2
+		context.beginPath()
+		context.arc(150, 300, 150, 0, 180 * deg, true);
+		context.fillStyle = "white"
+		context.fill();
+
+		//下圆2
+		context.beginPath()
+		context.arc(450, 300, 150, 0, 180 * deg, false);
+		context.fillStyle = "black"
+		context.fill();
+
+		//上圆3
+		context.beginPath()
+		context.arc(150, 300, 50, 0, 360 * deg, true);
+		context.fillStyle = "black"
+		context.fill();
+
+		//下圆3
+		context.beginPath()
+		context.arc(450, 300, 50, 0, 360 * deg, false);
+		context.fillStyle = "white"
+		context.fill();
+	</script>
+
+</html>

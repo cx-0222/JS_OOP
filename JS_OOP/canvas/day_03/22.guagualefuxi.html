@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>白天知识点复习~刮刮乐完整版</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			
+			#myCanvas {
+				box-shadow: 0 0 2px red;
+				position: absolute;
+				z-index: 10;
+				transition: all 2s ;
+			}
+			
+			#img {
+				position: absolute;
+				left: 0;
+				top: 130px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<img id="img" src="7.jpeg" />
+		<canvas id="myCanvas" width="600" height="600"></canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+
+		//绘制目标图像
+		context.fillStyle = "#BABABA";
+		context.fillRect(0, 0, canvas.width, canvas.height);
+
+		//绘制源图像
+		function draw(x, y) {
+			//每次抬起鼠标再次按下都是重新绘制 而不是在上次的基础上
+			//所以要用context.beginPath();来避免
+			context.beginPath();
+			context.globalCompositeOperation = "destination-out";
+			context.arc(x, y, 20, 0, 2 * Math.PI);
+			context.fill();
+		}
+
+		canvas.onmousedown = function(e) {
+			canvas.onmousemove = function(e) {
+				var ev = e || window.event;
+				var x = ev.clientX;
+				var y = ev.clientY;
+				draw(x, y);
+				apth();
+			}
+			document.onmouseup = function() {
+				canvas.onmousemove = null;
+			}
+		}
+		//用来检测刮出的部分是否超出一半
+		function apth(){
+			var imgData = context.getImageData(0,0,canvas.width,canvas.height);
+			var arr = imgData.data;
+			var count = 0;
+			for (var i = 0; i < arr.length; i+=4) {//遍历像素点数组 
+				if (arr[i+3] == 0) {//一个像素点由r g b a 四个值组成
+					//a 表示透明 
+					//记录下透明的个数
+					count++;
+				}
+			}
+			//arr 指 a 的数组 arr.length/4表示一共有多少个像素点
+			//count 透明像素点的个数
+			if(count >= arr.length/4/2){
+				canvas.style.opacity = 0;
+			}
+		}
+	</script>
+
+</html>

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			body,html{
+				margin: 0;
+				padding: 0;
+				background: #eee;
+				text-align: center;
+			}
+			#bodys{
+				margin: auto;
+				text-align: left;
+				padding: 20px 10px;
+				width: 355px;
+				/*height: 600px;*/
+				border: 1px solid #aaa;
+			}
+			#content{
+				width: 300px;
+				height: 150px;
+			}
+			button{
+				display: block;
+				width: 90px;
+				height: 30px;
+				background: white;
+			}
+			#center{
+				display: table;
+			}
+			#ccc{
+				display: table-cell;
+				vertical-align: middle;
+			}
+			ul{
+				list-style-type: none;
+				padding: 0;
+				margin: 10px 0 0px;
+				
+			}
+			li{
+				text-indent: 30px;
+				background: white;
+				list-style: none;
+				margin: 0;
+				padding: 0;
+				overflow: hidden;
+				padding-right: 10px;
+				border-bottom: 1px solid #ccc;
+			}
+			.right{
+				text-align: right;
+			}
+			#pages a {
+				background-color: #CCCCCC;
+				margin-left: 10px;
+			}
+		</style>
+	</head> 
+	<body>
+		<input type="hidden" name="ids" id="ids" value="" />
+		<div id="bodys">
+			<div id="center">
+				<span id="ccc">内容：</span>
+				<textarea id="content" name="" rows="" cols=""></textarea>
+				<button id="sub" onclick="sub()">提交</button>
+			</div>
+			<div>
+				<input type="hidden" name="page" id="page" value="0" />
+			</div>
+			<ul id="uls" data_id="ccc">	
+			</ul>
+			<div id="pages">
+				
+			</div>
+		</div>
+	</body>
+	<script src="../../day_01/JQuery-3.1.1.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		function addZero(s){
+			if (s<10){
+				return "0"+s;
+			}else{
+				return s;
+			}
+		}
+		function createLi(data){
+			var times = data.time*1000; 
+			var newDate = new Date();
+			newDate.setTime(times);
+			var dates = newDate.getFullYear()+"年"+addZero((newDate.getMonth()+1))+"月"+addZero(newDate.getDate())+"日"+" "+addZero(newDate.getHours())+":"+addZero(newDate.getMinutes())+":"+addZero(newDate.getSeconds());
+			var liObj = $('<li class="parents"><p>'
+			+data.content+
+			'</p><p class="right" data_id="'+data.messageId+'"><span>'
+			+dates+
+			'</span>顶：<a href="#" data_id="" onclick="" status="0">'
+			+data.like+
+			'</a>踩：<a href="#" data_id="" onclick="" status="1">'
+			+data.dislike+
+			'</a><a href="#" data_id="" onclick="" status="2">删除</a></p></li>');	
+			return liObj;
+		}
+		
+		//分页 查询多条记录
+		function selectAll(page){
+			$.ajax({
+			type:"get",
+			url:"ajax_16_select.php",
+			data:{
+				page:page
+			},
+			dataType:"json",
+			success:function(data){
+				console.log(data);
+				for(var keys in data){
+					if(keys != "page"){	
+						var liObj = createLi(data[keys]);
+						$("#uls").append(liObj);
+					}
+				}
+				setpages(data.page);
+			},
+			error:function(errors){
+				console.log(errors);
+			}
+		});
+	}
+		
+	//页码数
+	function setpages(page){
+		if(page == 0){
+			$("#page").html("");
+		}else{ 
+			var num = Math.abs(page-$("#pages a").length);
+			if ($("#pages a").length < page) {//3,7
+				var length = $("#pages a").length;
+				for (var i = 0; i < num; i++) {
+					var as = $("<a pages="+(length+i)+">"+(length+i+1)+"</a>");
+					$("#pages").append(as);
+				}
+			} else if($("#pages a").length > page){//7,3
+				for (var j = 0; j < num; j++) {
+					$("#pages a:last-child").remove();
+				}
+			} 
+			//这里不可以用else if 因为多用户登录的时候 可能有极端情况 
+			//需要$("#pages a").length > page 和 $("#pages a").length == page 都进入
+			//所以用else if 不满足
+			if($("#pages a").length == page){
+				if ($("#uls li").length == 0) {
+					var indexpage = $("#page").val();
+					selectAll(indexpage-1);
+					$("#page").val(indexpage-1);
+				}	
+			}
+		}
+		
+	}
+	//上来就调用 告诉它是第一页 展示第一页数据 
+	selectAll(0);	
+	//分页
+	var pages = document.getElementById("pages");
+	pages.addEventListener("click",function(e){
+		//false 是冒泡 
+		var ev = e || window.event;
+		console.log(ev.target);
+		var pages = $(ev.target).attr("pages");
+		if (pages) {
+			$("#page").val(pages);
+			//表示点击的是a 发ajax请求	
+			selectAll(pages);
+			$("#uls").html("");	
+		}
+	},false);	
+		
+		//点击提交 增加一条数据
+		function sub(){
+			var content = $("#content").val(); 
+			$.ajax({
+				type:"get",
+				url:"ajax_14_add.php",
+				data:{
+					content:content
+				},
+				dataType:"json",
+				success:function(data){
+					console.log(data);
+					var liObj = createLi(data);
+					$("#uls").prepend(liObj);
+					var h = liObj.height();	
+					liObj.height(0);	
+					liObj.animate({
+						height:h
+					})	
+					if($("#uls li").length == 6){
+						$("#uls li:last-child").animate({
+							height:0
+						},function(){
+							$("#uls li:last-child").remove();
+						})
+					}	
+					setpages(data.page);
+				},
+				error:function(errors){
+					console.log(errors);
+				}
+			});
+		}
+
+		//删除
+		var uls = document.getElementById("uls");
+		uls.addEventListener("click",function(e){
+			var ev = e || window.event;
+			//此处获取到的是字符串 所以在下面的case中 值应该是字符串类型
+			var status = $(ev.target).attr("status");
+			if (status) {
+				var messageId = $(ev.target).parent().attr("data_id");
+				//找出点击 li 的索引
+				var indexs = $(ev.target).parents(".parents").index();
+				switch (status){
+					case "0":
+						like(messageId,ev.target);
+						break;
+					case "1":
+						dislike(messageId,ev.target);
+						break;
+					case "2":
+						del(messageId,indexs);
+						break;
+					default:
+						break;
+				}
+			}
+			
+		},false);
+		
+		function del(ids,indexs){
+			$.ajax({
+				type:"get",
+				url:"del.php",
+				data:{
+					id:ids,
+					//当前是在第几页
+					page:$("#page").val()
+				},
+				dataType:"json",
+				success:function(data){
+					console.log(data);
+					$("#uls li").eq(indexs).animate({
+						height:0
+					},function(){
+						$("#uls li").eq(indexs).remove();	
+						setpages(data.page);
+					})
+					if (data.errorcode == 0) {	
+						var liObj = createLi(data[0]);
+						$("#uls").append(liObj);
+						var h = liObj.height();	
+						liObj.height(0);	
+						liObj.animate({
+							height:h
+						})
+					}
+				},
+				error:function(errors){
+					console.log(errors);
+				}
+			});
+		}
+		
+		//顶功能
+		function like(ids,obj){
+			//console.log(obj);
+			$.ajax({
+				type:"get",
+				url:"like.php",
+				data:{
+					id:ids
+				},
+				dataType:"json",
+				success:function(data){
+					console.log("成功");
+					//console.log(data);
+					if(data.msg){
+						alert(data.msg);
+					}
+					if(data.errorcode == 0){
+						//console.log($(obj));
+						//console.log(data.count);
+						$(obj).html(data.count);
+					}
+				},
+				error:function(errors){
+					console.log("失败");
+					console.log(errors);
+				}
+			});
+		}
+		
+		//踩功能
+		function dislike(ids,obj){
+			$.ajax({
+				type:"get",
+				url:"dislike.php",
+				data:{
+					id:ids
+				},
+				dataType:"json",
+				success:function(data){
+					console.log("成功");
+					console.log(data);
+					if(data.msg){
+						alert(data.msg);
+					}
+					if(data.errorcode == 0){
+						//console.log($(obj));
+						//console.log(data.count);
+						$(obj).html(data.count);
+					}
+				},
+				error:function(errors){
+					console.log("失败");
+					console.log(errors);
+				}
+			});
+		}
+	</script>
+</html>

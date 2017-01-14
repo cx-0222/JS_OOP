@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>面向对象绘制矩形</title>
+	<style type="text/css">
+			#myCanvas {
+				border: 1px solid lightgray;
+				/*background-color: gainsboro;*/
+			}
+		</style>
+	</head>
+
+	<body>
+		<canvas id="myCanvas" width="500" height="500">
+			你的浏览器不支持canvas
+		</canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementsByTagName("canvas")[0];
+		canvas.width = 800;
+		canvas.height = 600;
+		var context = canvas.getContext("2d");
+		
+		context.beginPath();
+		context.rect(300,400,200,100);
+		context.fillStyle = "aquamarine";
+		//context.fill();
+		
+		context.beginPath();
+		//当没有beginPath的时候  它先用自己的属性将第一个路径绘制一遍，然后再绘制一遍自己的
+		//所以第一个被压在下面了 看不见 如果第一个的canvas宽 高比较第二个大 能看见第一个
+		//就像线条
+		context.fillStyle = "olive";
+		context.rect(100,100,200,200);
+		//context.fill();
+		
+		//面向对象的方法
+		function Rect(x,y,width,height,color){
+			this.x = x;
+			this.y = y;
+			this.width = width;
+			this.height = height;
+			this.color = color;
+		}
+		
+		Rect.prototype.draw = function(){
+			context.beginPath();
+			context.rect(this.x,this.y,this.width,this.height);
+			context.fillStyle = this.color;
+			context.fill();
+		}
+		
+		var colorArr = ["red","blue","yellow","orange"];
+		var rectArr = [];
+		for (var i = 0; i < 4; i++) {
+			var rect1 = new Rect(100+50*i,100+50*i,400,200,colorArr[i]);
+			rect1.draw();
+			rectArr.push(rect1);
+		}
+		console.log(rectArr);
+	</script>
+
+</html>

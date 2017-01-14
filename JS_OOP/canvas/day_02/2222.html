@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>白天知识点复习</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			canvas {
+				background-color: gainsboro;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="myCanvas" width="600" height="600"></canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+		
+//图像的处理
+		var img = new Image();
+		img.src = "7.jpeg";
+		img.onload = function(){
+			//在画布中 载入图像
+			//drawImage(img,x,y) 在x,y处绘制图片
+			context.drawImage(img,0,130);
+			//后两个参数规定图片的大小
+			//context.drawImage(img,0,0,100,60);
+			//裁减 在图片中裁减出一个300,300,300,300(sourceX,sourceY,sourceWidth,sourceHeight)的矩形 
+			//并在 0,0,处 以 300,300  展示出来
+			//context.drawImage(img,0,0,300,300,0,0,300,300);
+			
+			//获取指定区域内的像素值getImageData(x,x,width,height)
+			var imgData = context.getImageData(0,130,img.width,img.height);
+			//console.log(imgData);//ImageData {data: Uint8ClampedArray[811200], width: 600, height: 338}
+			var arr = imgData.data;//像素值数组
+			//对像素值进行操作就能得到想要的图片
+			for (var i = 0; i < arr.length; i+=4) {
+				//因为 每一个像素点的数据在计算机中是以红绿蓝（RGB）三色外加透明度进行存储的
+				//只用遍历像素点 而不是遍历每一位
+				//第一位是r 红版
+				//arr[i] = 255;
+				//第二位是g 绿版
+				//arr[i+1] = 255;
+				//第三位是g 蓝版
+				//arr[i+2] = 255;
+				
+				//灰板 当r = g = b 的时候就是灰色
+				var r = arr[i];
+				var g = arr[i+1];
+				var b = arr[i+2];
+				//3 :不同数值表示灰色程度不同 越大越深
+				//var gray = parseInt((r+g+b)/3);
+				//arr[i] = arr[i+1] = arr[i+2] = gray;
+				
+				//反色：获取当前值 将 255减去该值就是反色
+				arr[i] = 255 - arr[i];
+				arr[i+1] = 255 - arr[i+1];
+				arr[i+2] = 255 - arr[i+2];
+			}
+			//将设置好的像素 插入
+			context.putImageData(imgData,0,0);
+		}
+		
+	
+	</script>
+</html>

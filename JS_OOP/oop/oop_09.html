@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>原型的继承</title>
+	</head>
+	<body>
+	</body>
+	<script type="text/javascript">
+		//父类的构造函数
+		function Person(){
+			
+		}
+		//父类原型 的 方法
+		Person.prototype.ccc = function(){
+			console.log("我是父类");
+		}
+		//子类的构造函数
+		function Student(){
+			
+		}
+		//子类的原型继承
+		function Lin(){}//先创建一个中间量
+		Lin.prototype = Person.prototype;
+		//Lin()对象的方法 属性来自于构造函数和原型 这里来源于原型
+		//new 会开辟一个新的地址
+		var proto = new Lin();
+		Student.prototype = proto;
+		//Student.prototype.constructor 的指向应该是自身的构造函数
+		Student.prototype.constructor = Student;//改变指向
+		console.log(Student.prototype.constructor);
+		
+		//此时改写 的时候 就不会影响父类
+		Student.prototype.ccc = function(){
+			console.log("我是子类")
+		}
+		
+		var person = new Person();
+		person.ccc();
+		
+		var stu = new Student();
+		stu.ccc();
+	</script>
+</html>

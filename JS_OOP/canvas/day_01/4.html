@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>canvas矩形</title>
+		<style type="text/css">
+			#myCanvas {
+				border: 1px solid lightgray;
+				/*background-color: gainsboro;*/
+			}
+		</style>
+	</head>
+
+	<body>
+		<canvas id="myCanvas" width="500" height="500">
+			你的浏览器不支持canvas
+		</canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementsByTagName("canvas")[0];
+		canvas.width = 600;
+		canvas.height = 600;
+		var context = canvas.getContext("2d");
+		
+		function randomNum(max,min){
+			return parseInt(Math.random()*(max-min+1)+min);
+		}
+		//console.log(randomNum(5,0));
+		var dis = 0;
+		var colorArr = ["red","blue","yellow","orange"];
+		for(var i = 0; i < 4; i++) {
+			var r = randomNum(255,0);
+			var g = randomNum(255,0);
+			var b = randomNum(255,0);
+			var dis = dis + 50;
+			var x = 50 + dis;
+			var y = 250 + dis;
+			context.beginPath();
+			context.moveTo(x,x);
+			context.lineTo(y,x);
+			context.lineTo(y,y);
+			context.lineTo(x,y);
+			context.closePath()
+				//context.stroke();
+			//context.fillStyle = colorArr[i];
+			context.fillStyle = "rgb("+r+","+g+","+b+")";
+			context.fill()
+		}
+	</script>
+
+</html>

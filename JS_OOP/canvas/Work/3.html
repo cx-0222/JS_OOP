@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>画板</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			
+			canvas {
+				box-shadow: 0 0 2px gray;
+			}
+			a {
+				text-decoration: none;
+				font-size: 12px;
+				border: 1px solid #DBDBDB;
+				border-radius: 3px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<canvas id="myCanvas" width="600" height="600"></canvas>
+		<button class="pen">画笔</button>
+		<button class="eraser">橡皮</button>
+		<a id="a" href="">生成图片</a>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+		var pen = document.getElementsByClassName("pen")[0];
+		var eraser = document.getElementsByClassName("eraser")[0];
+		var a = document.getElementById("a");
+		var lastX, lastY;
+		var penClick = false;
+		var eraserClick = false;
+
+		pen.onclick = function() {
+			eraserClick = false;
+			penClick = true;
+		}
+
+		//画笔事件
+		function draw(x, y) {
+			//画点
+			context.save();
+			context.beginPath();
+			context.arc(x, y, 2, 0, 2 * Math.PI);
+			context.fill();
+			//连线
+			context.beginPath();
+			context.moveTo(lastX, lastY);
+			context.lineTo(x, y);
+			context.lineWidth = 4
+			context.stroke()
+			lastX = x;
+			lastY = y;
+			context.restore();
+		}
+
+		eraser.onclick = function() {
+			penClick = false;
+			eraserClick = true;
+		}
+
+		//橡皮事件
+		function Eraser(x, y) {
+			context.save();
+			context.globalCompositeOperation = "destination-out";
+			//画点
+			context.beginPath();
+			context.arc(x, y, 4, 0, 2 * Math.PI);
+			context.fill();
+			//连线
+			context.beginPath();
+			context.moveTo(lastX, lastY);
+			context.lineTo(x, y);
+			context.lineWidth = 8
+			context.stroke()
+			lastX = x;
+			lastY = y;
+			context.restore();
+		}
+
+		canvas.onmousedown = function(e) {
+			var ev = e || window.event;
+			lastX = ev.clientX;
+			lastY = ev.clientY;
+			document.onmousemove = function(e) {
+				if(penClick) {
+					var ev = e || window.event;
+					var x = ev.clientX;
+					var y = ev.clientY;
+					draw(x, y);
+				} 
+				if(eraserClick) {
+					var ev = e || window.event;
+					var x = ev.clientX;
+					var y = ev.clientY;
+					Eraser(x, y);
+				}
+			}
+		}
+
+		document.onmouseup = function() {
+			document.onmousemove = null;
+		}
+		
+		
+		//生成图片
+		a.onclick = function(){
+			var url = canvas.toDataURL();
+			a.href = url;
+			a.download = "huaban";
+		}
+	</script>
+
+</html>

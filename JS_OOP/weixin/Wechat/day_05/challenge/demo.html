@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<title></title>
+		<style type="text/css">
+			body,html{
+				margin: 0;
+				padding: 0;
+				width: 100%;
+				height: 100%;
+			}
+			#myCanvas{
+				box-shadow: 0 0 10px cyan;
+				margin: auto;
+				display: block;
+			}
+			#btn{
+				width: 25%;
+				height: 14.08%;
+				background : url(img/demo/btn.png) 0px 0px / contain;
+				position: absolute;
+				left: 0;
+				top:0
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="myCanvas" width="" height=""></canvas>
+		<div id="btn">
+			
+		</div>
+	</body>
+	<script type="text/javascript">
+		var width = document.documentElement.clientWidth;
+		var height = document.documentElement.clientHeight;
+		var canvas = document.getElementById('myCanvas');
+		var context = canvas.getContext('2d');
+		var deg = Math.PI / 180;
+		var divs = document.getElementById('btn');
+		canvas.width = width;
+		canvas.height = height;
+		
+		//设计稿 与 画布上的比例
+		var scaleX = canvas.width/640;
+		var scaleY = canvas.height/1136;
+		
+		function loading(imgArr,fn){
+			var length = 0;
+			for(var keys in imgArr){
+				length++;
+			}
+			var num = 0;
+			var imgObj = {};
+			for(var keys in imgArr){
+				var img = new Image();
+				img.src = imgArr[keys];
+				img.onload = (function(key){
+					return function(){
+						num++;
+						imgObj[key] = this;
+						var sum = num/length;
+						if(fn.progress){
+							fn.progress(sum);
+						}
+						if(num>=length){
+							if(fn.complete){
+								fn.complete(imgObj);
+							}
+						}
+					}
+				})(keys)
+			}	
+		}
+		loading({
+			"bg":"img/demo/index.png",
+			"len":"img/demo/len.png",
+			"matong":"img/demo/matong.png",
+			"yun1":"img/demo/云1.png",
+			"yun2":"img/demo/云2.png",
+			"yun3":"img/demo/云3.png",
+			"yun4":"img/demo/云4.png",
+			"yun5":"img/demo/云5.png",
+			"yun6":"img/demo/云6.png",
+			"yun7":"img/demo/云7.png",
+			
+			"cake1":"img/cake 1.png",
+			"cake2":"img/cake 2.png",
+			"cake3":"img/cake 3.png",
+			"checkcake1":"img/checkcake1.png",
+			"checkcake2":"img/checkcake2.png",
+			"checkcake3":"img/checkcake3.png",
+			"milk":"img/milk .png",
+			"sugar1":"img/sugar1.png",
+			"sugar2":"img/sugar2.png",
+			"sugar3":"img/sugar3.png",
+			"dan1":"img/demo/dan1.png",
+			"qtang":"img/demo/qtang.png"
+			
+			
+		},{
+			complete:main
+		})
+		function main(imgObj){
+			var liArr = [imgObj.dan1,imgObj.qtang,imgObj.sugar2,imgObj.milk,imgObj.cake1,imgObj.cake3,imgObj.cake2,imgObj.sugar2];
+			//礼物 
+			function Li(img,obj){
+				this.img = img;
+				this.w = this.img.width*scaleX;
+				this.h = this.img.height*scaleY;
+				this.x = obj.x+obj.w/2-this.w/2;
+				this.y = obj.y+obj.h/2-this.h/2;
+				this.speed = obj.speed;
+			}
+			Li.prototype.draw = function(){
+				context.drawImage(this.img,this.x,this.y,this.w,this.h);
+			}
+			Li.prototype.move = function(speed){
+				this.speed = speed;
+				this.x += this.speed;
+			}
+			//云
+			function Yun(obj){
+				this.x = obj.x;
+				this.y = obj.y;
+				this.img = obj.img;
+				//云的宽高
+				this.w = this.img.width*scaleX;
+				this.h = this.img.height*scaleY;
+				
+				this.speed = obj.speed;
+				//礼物 每朵云有个属性 是礼物 每个礼物又是一个对象
+				//每次创建一朵云 就应该创建一个礼物
+				//this 表示这里创建的云
+				this.li = new Li(obj.li,this);
+				
+			}
+			Yun.prototype.draw = function(){
+				context.drawImage(this.img,this.x,this.y,this.img.width*scaleX,this.img.height*scaleY);
+				//在绘制云的时候 绘制礼物 且应该在云之后绘制
+				this.li.draw();
+			}
+			Yun.prototype.move = function(){
+				if (this.x<0 || this.x>canvas.width - this.img.width*scaleX) {
+					this.speed *= -1;
+				}
+				this.x += this.speed;
+				this.li.move(this.speed);
+			}
+			var yun1 = new Yun({
+				x:canvas.width*0.2813,
+				y:canvas.height*0.4781,
+				img:imgObj.yun4,
+				speed:3,
+				li:liArr[randomNum(0,7)]
+			});
+			var yun2 = new Yun({
+				x:canvas.width * 0.6484,
+				y:canvas.height * 0.52,
+				speed:2,
+				img:imgObj.yun2,
+				li:liArr[randomNum(0,7)]
+			});
+			var yun3 = new Yun({
+				x:canvas.width * 0.0469,
+				y:canvas.height * 0.6,
+				speed:3,
+				img:imgObj.yun3,
+				li:liArr[randomNum(0,7)]
+			});
+			var yun4 = new Yun({
+				x:canvas.width * 0.4062,
+				y:canvas.height * 0.7,
+				speed:3,
+				img:imgObj.yun4,
+				li:liArr[randomNum(0,7)]
+			});
+			var yun5 = new Yun({
+				x:canvas.width * 0.6469,
+				y:canvas.height * 0.7367,
+				speed:4,
+				img:imgObj.yun5,
+				li:liArr[randomNum(0,7)]
+			});
+			var yun6 = new Yun({
+				x:canvas.width * 0.1031,
+				y:canvas.height * 0.816,
+				speed:3,
+				img:imgObj.yun4,
+				li:liArr[randomNum(0,7)]
+			});
+			var yun7 = new Yun({
+				x:canvas.width * 0.5438,
+				y:canvas.height * 0.8961,
+				speed:5,
+				img:imgObj.yun7,
+				li:liArr[randomNum(0,7)]
+			});
+			var yunArr = [yun1,yun2,yun3,yun4,yun5,yun6,yun7];
+			//马桶塞
+			function Matong(){
+				//决定杆子有多长
+				this.len = canvas.height*0.15;
+				this.rotatedeg = 45;
+				this.rotatespeed = 1;
+				this.lenspeed = 0;
+				//初始运动方向
+				this.dir = "right";
+				
+				//碰撞检测要用
+				this.x = 0;
+				this.y = 0;
+				this.w = imgObj.matong.width*scaleX;
+				this.h = imgObj.matong.height*scaleY;
+				
+			}
+			Matong.prototype.draw = function(){
+				context.save();
+				//平移
+				//0.3828 由设计稿与量出来的宽高的比例
+				context.translate(canvas.width*0.3828,canvas.height*0.2245);
+				//旋转
+				context.rotate(this.rotatedeg*deg);
+				context.drawImage(imgObj.len,0,0,imgObj.len.width*scaleX,this.len);
+				context.drawImage(imgObj.matong,-imgObj.matong.width*scaleX/2+imgObj.len.width*scaleX/2,this.len,imgObj.matong.width*scaleX,imgObj.matong.height*scaleY);
+				context.restore();
+			}
+			Matong.prototype.move = function(){
+				if(this.rotatedeg >= 45){
+					this.rotatespeed = -1;
+				}else if(this.rotatedeg <= -45){
+					this.rotatespeed = 1;
+				}
+				
+				if (this.len < canvas.height*0.15) {
+					this.len = canvas.height*0.15;
+					this.lenspeed = 0;
+					if (this.dir == "left") {
+						this.rotatespeed = 1;
+					} else{
+						this.rotatespeed = -1;
+					}
+				}
+				
+				//碰撞 左边
+				var x = canvas.width*0.3828 - this.len*Math.sin(this.rotatedeg*deg);
+				var y = canvas.height*0.2245 + this.len*Math.cos(this.rotatedeg*deg);
+				this.x = x - this.w/2 * Math.cos(this.rotatedeg*deg);
+				this.y = y - this.w/2 * Math.sin(this.rotatedeg*deg);
+				if(this.x < 0){
+					this.lenspeed = -2;
+				}
+				//右边 
+				//var x = canvas.width*0.3828 - this.len*Math.sin(this.rotatedeg*deg);
+				//var y = canvas.height*0.2245 + this.len*Math.cos(this.rotatedeg*deg);
+				this.x = x + this.w/2 * Math.cos(this.rotatedeg*deg);
+				//this.y = y - this.w/2 * Math.sin(this.rotatedeg*deg);
+				if(this.x > canvas.width){
+					this.lenspeed = -2;
+				}
+				//下面
+				this.y = canvas.height*0.2245 + this.len + this.h;
+				if(this.y > canvas.height){
+					this.lenspeed = -2;
+				}
+				
+				//与礼物的碰撞
+				
+				
+				this.rotatedeg += this.rotatespeed;
+				this.len += this.lenspeed;
+			}
+			var matong =new Matong();
+			
+			function ani(){
+				context.clearRect(0,0,canvas.width,canvas.height);
+				context.drawImage(imgObj.bg,0,0,canvas.width,imgObj.bg.height/imgObj.bg.width*canvas.width);
+				
+				matong.draw();
+				matong.move();
+				for (var i = 0; i < yunArr.length; i++) {
+					yunArr[i].draw();
+					yunArr[i].move();
+					if(peng(yunArr[i].li,matong)){
+						console.log("碰到le");	
+						matong.lenspeed = -2;
+					}else{
+						//console.log("没有碰到");
+					}
+				
+					
+				}
+				//yun1.draw();
+				//yun1.move();
+				window.requestAnimationFrame(ani);
+			}
+			ani();
+			
+			
+			//放在main方法里面
+			divs.addEventListener("touchstart",function(e){
+				var ev = e || window.event;
+				if(matong.rotatespeed > 0){
+					//表示往左走
+					matong.dir = "left";
+				}else{
+					//表示往右走
+					matong.dir = "right";
+				}
+				matong.lenspeed = 2;
+				//伸长的时候 停止转动
+				matong.rotatespeed = 0;
+				ev.preventDefault();
+			},false);
+			//控制一直按着
+			divs.addEventListener("touchend",function(){
+				matong.lenspeed = -2;
+			},false);
+		}
+		
+		
+		
+		
+		function peng(obj1,obj2){
+			var x1 = obj1.x;
+			var l1 = obj1.w + x1;
+			var y1 = obj1.y;
+			var h1 = obj1.h + y1;
+			
+			var x2 = obj2.x;
+			var l2 = obj2.w + x2;
+			var y2 = obj2.y;
+			var h2 = obj2.h + y2;
+			if(l1>x2&&x1<l2&&h1>y2&&y1<h2){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		
+		function randomNum(max,min){
+			return parseInt(Math.random()*(max-min+1)+min);
+		}
+		//console.log(randomNum(5,1));
+	</script>
+</html>

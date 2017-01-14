@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>通讯录</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			
+			.wrap {
+				width: 150px;
+				/*height: 150px;*/
+				border: 1px solid black;
+				margin-top: 10px;
+				font: normal 15px/30px "微软雅黑";
+				text-align: center;
+			}
+			
+			.wrap div {
+				width: 100%;
+				height: 30px;
+				border-bottom: 1px solid black;
+			}
+			
+			.addUser {
+				width: 300px;
+				height: 100px;
+				background-color: burlywood;
+				text-align: center;
+				padding-top: 20px;
+				position: absolute;
+				top: 40px;
+				left: 200px;
+				display: none;
+			}
+			
+			.addUser input {
+				display: block;
+				margin: 2px auto;
+			}
+			
+			.selUser {
+				width: 300px;
+				height: 60px;
+				background-color: burlywood;
+				text-align: center;
+				padding-top: 10px;
+				position: absolute;
+				top: 40px;
+				left: 200px;
+				display: none;
+			}
+			
+			.selUser input {
+				display: block;
+				margin: 2px auto;
+			}
+			
+			.UpdUser {
+				width: 300px;
+				height: 100px;
+				background-color: burlywood;
+				text-align: center;
+				padding-top: 20px;
+				position: absolute;
+				top: 40px;
+				left: 200px;
+				display: none;
+			}
+			
+			.UpdUser input {
+				display: block;
+				margin: 2px auto;
+			}
+		</style>
+	</head>
+
+	<body>
+		<input type="button" id="btnAd" value="添加联系人" />
+		<input type="button" id="btnSe" value="查找联系人" />
+		<div class="wrap">
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+		</div>
+
+		<div class="addUser">
+			姓名：<input class="username" type="text" value="" /> 电话：
+			<input class="userphone" type="text" value="" />
+			<input type="button" id="yes" value="确定" />
+		</div>
+
+		<div class="selUser">
+			姓名：<input class="Selusername" type="text" value="" />
+			<input type="button" id="Syes" value="确定" />
+		</div>
+		<input type="button" class="btnUpd" value="编辑" />
+		<input type="button" class="btnUpd" value="编辑" />
+		<input type="button" class="btnUpd" value="编辑" />
+		<input type="button" class="btnUpd" value="编辑" />
+		<input type="button" class="btnUpd" value="编辑" />
+
+		<div class="UpdUser">
+			信息：<input class="Upduser" type="text" value="" />
+			<!--电话：<input class="Upduserphone" type="text" value="" />-->
+			<input type="button" id="Updyes" value="确定" />
+		</div>
+
+		<input type="button" class="btnDel" value="删除" />
+		<input type="button" class="btnDel" value="删除" />
+		<input type="button" class="btnDel" value="删除" />
+		<input type="button" class="btnDel" value="删除" />
+		<input type="button" class="btnDel" value="删除" />
+
+	</body>
+	<script type="text/javascript">
+		var wrap = document.getElementsByClassName("wrap")[0];
+		var divs = wrap.getElementsByTagName("div");
+		var btnSe = document.getElementById("btnSe");
+		var btnAd = document.getElementById("btnAd");
+		var addUser = document.getElementsByClassName("addUser")[0];
+		var username = document.getElementsByClassName("username")[0];
+		var userphone = document.getElementsByClassName("userphone")[0];
+		var yes = document.getElementById("yes");
+		var selUser = document.getElementsByClassName("selUser")[0];
+		var Selusername = document.getElementsByClassName("Selusername")[0];
+		var Syes = document.getElementById("Syes");
+		var btnUpds = document.getElementsByClassName("btnUpd");
+
+		var UpdUser = document.getElementsByClassName("UpdUser")[0];
+		var Upduser = document.getElementsByClassName("Upduser")[0];
+		//var Upduserphone = document.getElementsByClassName("Upduserphone")[0];
+		var Updyes = document.getElementById("Updyes");
+		var btnDel = document.getElementsByClassName("btnDel");
+		
+		
+		var index = 0;
+		var num = 0;
+		//var count = 0;
+		function User() {
+			this.userArr = [{
+				name: "cx1",
+				phone: "111111"
+			}, {
+				name: "cx2",
+				phone: "222222"
+			}, {
+				name: "cx3",
+				phone: "333333"
+			}, {
+				name: "cx4",
+				phone: "444444"
+			}, {
+				name: "cx5",
+				phone: "555555"
+			}];
+		}
+		
+		var user = new User();
+
+		function getUserInfo() {
+			for(var i = 0; i < user.userArr.length; i++) {
+				divs[i].innerText = user.userArr[i].name + " : " + user.userArr[i].phone;
+				divs[i].count = i;
+			}
+		}
+		getUserInfo();
+		
+		//console.log(divs[3].count);
+		//增 
+		User.prototype.Add = function() {
+			addUser.style.display = "block";
+			yes.onclick = function() {
+				user.userArr.push({
+					name: username.value,
+					phone: userphone.value
+				});
+				console.log(user.userArr);
+				getUserInfo();
+				username.value = "";
+				userphone.value = "";
+				addUser.style.display = "none";
+
+			}
+			var div = document.createElement("div");
+			wrap.appendChild(div);
+			
+			//console.log(divs.length);
+		}
+
+		btnAd.onclick = function() {
+			user.Add();
+		}
+
+		//删 
+		
+		for(var i = 0; i < btnDel.length; i++) {
+			a = divs[i].count;
+			//console.log(divs[i].count);
+			btnDel[a].onclick = function() {
+				//num++;
+				//console.log(divs[num - 1]);
+				//console.log(a);
+				var str = divs[a].innerText;
+				//console.log(str);
+				ss = str.split(" : ");
+				console.log(ss);
+
+				for(var j = 0; j < user.userArr.length; j++) {
+					if(user.userArr[j].name == ss[0]) {
+						user.userArr.splice(j, 1);
+					}
+				}
+				console.log(user.userArr);
+				divs[a].innerText = '';
+				divs[a].style.display = "none";
+				//wrap.removeChild(divs[num-1]);	
+			}
+		}
+
+		//改 
+		for(var i = 0; i < btnUpds.length; i++) {
+			btnUpds[i].onclick = function() {
+				index++;
+				UpdUser.style.display = "block";
+				Upduser.value = divs[index - 1].innerText;
+				//alert(Upduser.value);
+				Updyes.onclick = function() {
+					//alert(Upduser.value);
+					divs[index - 1].innerText = Upduser.value;
+					UpdUser.style.display = "none";
+				}
+
+			}
+		}
+
+		//查
+		User.prototype.Select = function() {
+			selUser.style.display = "block"
+			Syes.onclick = function() {
+				//alert(Selusername.value);
+				for(var i = 0; i < user.userArr.length; i++) {
+					if(user.userArr[i].name == Selusername.value) {
+						alert(user.userArr[i].phone);
+					}
+				}
+			}
+		}
+
+		btnSe.onclick = function() {
+			user.Select();
+		}
+	</script>
+
+</html>

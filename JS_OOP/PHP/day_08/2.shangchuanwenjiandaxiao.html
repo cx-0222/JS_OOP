@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<form action="2.php" method="post" enctype="multipart/form-data">
+			<!--如果要使用MAX_FILE_SIZE来限制我们上传文件的大小
+				需要我们将隐藏域放在我们file前面 并通过设置value
+				来决定我们上传文件的大小 单位是默认字节 即B 
+			-->
+			<input type="hidden" name="MAX_FILE_SIZE" id="MAX_FILE_SIZE" value="30000" />
+			<input type="file" name="image" id="" value="30" />
+			<input type="submit" value="提交"/>
+		</form>
+	</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>白天知识点复习</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			canvas {
+				box-shadow: 0 0 2px gainsboro;
+				position: absolute;
+				z-index: 10;
+			}
+			img {
+				position: absolute;
+				top: 130px;
+				left: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<img id="img" src="7.jpeg"/>
+		<canvas id="myCanvas" width="600" height="600"></canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+//图形的组合方式	
+		context.save();
+		context.fillStyle = "red";
+		context.fillRect(100,100,200,100);
+		
+		//!!!放在两个图像之间 否则没有任何效果
+		//globalCompositeOperation 属性设置或返回如何将一个源（新的）图像绘制到目标（已有）的图像上。
+		//源图像 = 您打算放置到画布上的绘图。
+		//目标图像 = 您已经放置在画布上的绘图。
+		
+			//① source-over：默认 源图像在目标图上上方
+		context.globalCompositeOperation = "source-over";
+			//② souece-in:以源图像的颜色显示重叠的部分 (目标图像透明)
+		context.globalCompositeOperation = "source-in";
+			//③source-atop: 只显示在目标图像内的源图像 目标图像之外的不可见
+		context.globalCompositeOperation = "source-atop";
+			//④source-out: 目标图像透明 只显示出目标图像之外的源图像
+		context.globalCompositeOperation = "source-out";
+			//⑤destination 目标 目标图像在源图像上方
+		context.globalCompositeOperation = "destination-over";
+			//⑥ 以目标图像的颜色显示重叠部分
+		context.globalCompositeOperation = "destination-in";
+			//⑦ 只显示源图像内的目标图像 源图像之外的不可见
+		context.globalCompositeOperation = "destination-atop";
+			//⑧ 显示源图像外的目标图像 源图像透明 ！！！！！刮刮乐！！
+		context.globalCompositeOperation = "destination-out";
+			//⑨ 显示目标图像 + 源图像 且重叠部分以三原色原理显示  如：红加绿变黄
+		context.globalCompositeOperation = "lighter";
+			//⑩ 显示源图像 忽略目标图像
+		context.globalCompositeOperation = "copy";
+		context.fillStyle = "green";
+		context.fillRect(100,100,100,200);
+		context.restore();
+//刮刮乐
+		context.clearRect(0,0,canvas.width,canvas.height);
+		
+		//目标图像 灰色画布 用来遮盖图片
+		context.fillStyle = "gainsboro";
+		context.fillRect(0,0,canvas.width,canvas.height);
+		context.globalCompositeOperation = "destination-out";
+		//源图像 笔触
+		//context.beginPath();
+		//context.arc(300,300,100,0,2*Math.PI);
+		//context.fill();
+		
+		//跟随鼠标动
+		canvas.onmousedown = function(){
+			document.onmousemove = function(e){
+				var ev = e || window.event;
+				//获取鼠标位置
+				var x = ev.clientX;
+				var y = ev.clientY;
+				//绘制源图像
+				context.beginPath();
+				context.arc(x,y,20,0,2*Math.PI);
+				context.fill();
+			}
+			document.onmouseup = function(){
+				document.onmousemove = null;
+			}
+		}
+		
+	</script>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>绘制文字</title>
+		<style type="text/css">
+			#myCanvas {
+				border: 1px solid lightgray;
+				background-color: gainsboro;
+			}
+		</style>
+	</head>
+
+	<body>
+		<canvas id="myCanvas" width="500" height="500">
+			你的浏览器不支持canvas
+		</canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementsByTagName("canvas")[0];
+		canvas.width = 600;
+		canvas.height = 600;
+		var context = canvas.getContext("2d");
+
+		//设置文字
+		var text = "hello bitches";
+		context.font = "italic 50px serif";
+		context.strokeStyle = "#1E90FF";
+		//context.strokeText(text,100,100);
+		
+		//context.fillRect(100,150,400,400);
+		
+		//渐变 设置 在绘制之前
+		var gradient = context.createLinearGradient(100,100,400,400);
+		//这里的线性渐变的比例是给画布分比例的 当文字在某段区域内 就会显示某段区域的颜色
+		gradient.addColorStop("0","blue");
+		gradient.addColorStop("0.5","green");
+		gradient.addColorStop("1","red");
+		//context.strokeStyle = gradient;
+		//context.strokeText(text,100,100);
+		context.fillStyle = gradient;
+		context.fillText(text,100,100);
+		context.fillRect(100,150,400,400);
+	</script>
+
+</html>

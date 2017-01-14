@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>图像变化</title>
+		<style type="text/css">
+			#myCanvas {
+				border: 1px solid lightgray;
+				background-color: gainsboro;
+			}
+		</style>
+	</head>
+
+	<body>
+		<canvas id="myCanvas" width="500" height="500">
+			你的浏览器不支持canvas
+		</canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementsByTagName("canvas")[0];
+		canvas.width = 600;
+		canvas.height = 600;
+		var context = canvas.getContext("2d");
+
+		context.fillStyle = "royalblue";
+		context.fillRect(0,0,200,200);
+		//画布旋转
+		context.rotate(0.25*Math.PI);
+		context.fillRect(325,0,200,200);
+		//旋转回去
+		context.rotate(-0.25*Math.PI);
+		context.fillRect(400,400,200,200);
+
+	
+	</script>
+
+</html>

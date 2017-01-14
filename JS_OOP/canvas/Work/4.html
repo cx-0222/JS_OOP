@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Title</title>
+		<style type="text/css">
+			canvas {
+				box-shadow: 0 0 2px gray;
+				background-color: gainsboro;
+			}
+		</style>
+	</head>
+
+	<body>
+		<canvas id="canvas1" width="900px" height="550px">Canvas demo</canvas>
+		<img id="image1" style="display: none;" src="7.jpeg" />
+	</body>
+	<script type="text/javascript">
+		/*
+		 *canvasid:html canvas标签id
+		 *imageid:html img 标签id
+		 *gridcountX:x轴图片分割个数
+		 *gridcountY:y轴图片分割个数
+		 *gridspace:宫格空隙
+		 *offsetX：x*y宫格相对canvas（0，0）X坐标偏移量
+		 **offsetX：x*y宫格相对canvas（0，0）Y坐标偏移量
+		 *isanimat：是否启用动画显示
+		 */
+		function ImageGrid(canvasid, imageid, gridcountX, gridcountY, gridspace, offsetX, offsetY, isanimat) {
+
+			var canvas = document.getElementById(canvasid);
+			var g = canvas.getContext("2d");
+			var img = document.getElementById(imageid);
+			console.log(img);
+			img.onload = function() {
+				g.drawImage(img, 0, 0);
+				var imagedata = g.getImageData(0, 0, img.width, img.height);
+				//console.log(imagedata);
+				
+				var grid_width = imagedata.width / gridcountX;
+				var grid_height = imagedata.height / gridcountY;
+				//动画
+				if(isanimat) {
+					var x = 0,
+						y = 0;
+					var inter = setInterval(function() {
+						g.putImageData(imagedata, gridspace * x + offsetX, gridspace * y + offsetY, grid_width * x, grid_height * y, grid_width, grid_height);
+						x < gridcountX ? x++ : x = 0;
+						if(x == 0) {
+							y < gridcountY ? y++ : y = 0;
+						}
+					}, 200);
+					y == gridcountY ? clearInterval(inter) : null;
+				} else { //非动画
+					for(var y = 0; y < gridcountY; y++) {
+						for(var x = 0; x < gridcountX; x++) {
+							g.putImageData(imagedata, gridspace * x + offsetX, gridspace * y + offsetY, grid_width * x, grid_height * y, grid_width, grid_height);
+						}
+					}
+				}
+
+			}
+
+		}
+
+		ImageGrid("canvas1", "image1", 3, 3, 2, 220, 0, false); //3*3
+		//ImageGrid("canvas1", "image1", 4, 4, 2, 440, 0, true); //4*4
+		//ImageGrid("canvas1", "image1", 3, 4, 2, 660, 0, false); //3*4
+	</script>
+
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>原生后台</title>
+	</head>
+	<body>
+		<input type="text" name="wd" id="wd" value="" />
+		<ul id="uls"></ul>
+	</body>
+	<script type="text/javascript">
+		var wd = document.getElementById("wd");
+		var uls = document.getElementById("uls");
+		function success(data){
+			console.log("成功");
+			//console.log(data);
+			uls.innerHTML = "";
+			for (var i=0; i < data.length;i++) {
+				var li = document.createElement("li");
+				li.innerHTML = data[i].name;
+				uls.appendChild(li);
+			}
+		}
+		wd.oninput = function(){
+			//console.log(this.value);
+			var os = document.createElement("script");
+			os.src = "http://10.80.8.229/JS_OOP/jsonp/day_01/4.yuanshenghoutai.php?cb=success&wd="+this.value;
+			var oh = document.getElementsByTagName("head")[0];
+			oh.appendChild(os);
+			oh.removeChild(os);
+			
+			
+		}
+		
+	</script>
+</html>

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>白天知识复习~打飞机</title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			
+			#myCanvas {
+				box-shadow: 0 0 2px red;
+			}
+		</style>
+	</head>
+
+	<body>
+		<canvas id="myCanvas" width="600" height="600"></canvas>
+	</body>
+	<script type="text/javascript">
+		var canvas = document.getElementById("myCanvas");
+		var context = canvas.getContext("2d");
+
+		//图片预加载方法 
+		//能实现图片的加载以及加载后调用我们想要执行的方法 并且可以有进度传递
+		//图片预加载方法 在调用该方法的时候 将所需图片以及加载完后的方法传入 所以应该有参数来接收
+		function loading(objImg, obj) {
+			//1.求出一共加载了多少张图片 即遍历objImg 因为是对象 所以用for in遍历
+			var length = 0; //存储一共有多少张图片
+			for(var keys in objImg) {
+				length++;
+			}
+
+			//2.objImg只是一个放图片的对象 因为里面的图片待会都得用
+			//所以 遍历objImg 将每张图片变为image对象 并添加src
+			//用来存放图片对象
+			var imgObj = {};
+			var num = 0;
+			for(var keys in objImg) {
+				var img = new Image();
+				//取出objImg[keys]的值 并赋给图片对象的src属性
+				img.src = objImg[keys];
+				//将创建的当前图片对象存放进imgObj 
+				//!!!但是应该在图片加载完后在存入imgObj
+				//！！！在for循环中有新的函数 在函数体内想用循环变量以及由循环变量影响的变量时 
+				//存在变量污染问题 可以利用属性或闭包解决问题
+				img.onload = (function(keys, img) {
+					return function() {
+						//记录多少张图片加载好了
+						//用来制作进度条的百分比
+						num++;
+						//将图片对象存入imgObj 但是imgObj是对象不是数组 所以不可以直接插入
+						//给对象插入键值对(赋值)
+						imgObj[keys] = img;
+						//进度条 进度
+						var loads = num / length;
+						if(obj.load) { //安全处理
+							//如果传入的第二个参数中有该属性
+							//进度条变化时，就会调用相关的函数 并将进度值传入
+							obj.load(loads);
+						}
+						if(num >= length) { //意味着都加载完毕
+							if(obj.complete) {
+								obj.complete(imgObj);
+							}
+						}
+					}
+				})(keys, img)
+
+			}
+		}
+		//传入两个对象参数
+		//一个对象为所需的所有图片
+		//一个对象为加载完成后所调用的函数
+		loading({
+			"bg": "img/background.png",
+			"hero": "img/herofly.png",
+			"bullet": "img/bullet2.png",
+			"enemy1": "img/enemy1.png",
+			"enemy2": "img/enemy2.png",
+			"enemy3": "img/enemy3.png"
+		}, {
+			complete: main,
+			load: load
+		})
+
+		//预加载完成后 调用的函数
+		function main(imgObj) {
+			//1. 获取设备的宽高 以此设置画布的宽高
+			//!!!移动端事件 一定要加meta
+			var windowWidth = document.documentElement.clientWidth;
+			var windowHeight = document.documentElement.clientHeight;
+			canvas.width = windowWidth;
+			canvas.height = windowHeight;
+
+			//3.英雄机构造函数 
+			function Hero() {
+				this.img = imgObj.hero;
+				//x 表示飞机在canvas中的位置 横坐标 初始设置在中心
+				this.x = canvas.width / 2 - this.img.width / 5 / 2;
+				this.y = canvas.height - this.img.height * 2;
+				//飞机的宽高 图片是精灵图 一共有5架飞机 求一架的宽度 自然是除以5
+				this.w = this.img.width / 5;
+				this.h = this.img.height;
+				
+				this.length = 5;
+				this.index = 0;
+				this.life = true;
+				
+				this.ani = false;
+			}
+			//绘制英雄机
+			Hero.prototype.draw = function() {
+				context.drawImage(this.img, this.index*this.w, 0, this.img.width / 5, this.img.height, this.x, this.y, this.w, this.h);
+			}
+			var hero = new Hero();
+			//英雄机跟随手指移动 touch事件
+			canvas.addEventListener("touchmove", function(e) {
+				var ev = e || window.event;
+				var x = ev.touches[0].clientX;
+				var y = ev.touches[0].clientY;
+				//让飞机的中心跟随手指的滑动而动
+				if(x <= hero.w/2){
+					x = hero.w/2
+				}
+				if(x >= canvas.width - hero.w/2){
+					x = canvas.width - hero.w/2
+				}
+				if(y <= hero.h/2){
+					y = hero.h/2
+				}
+				if(y >= canvas.height - hero.h/2){
+					y = canvas.height - hero.h/2
+				}
+				hero.x = x - hero.w / 2;
+				hero.y = y - hero.h / 2;
+			}, false);
+
+			//4.子弹的构造函数
+			function Bullet() {
+				this.img = imgObj.bullet;
+				this.w = this.img.width;
+				this.h = this.img.height;
+				//子弹的位置与飞机有关 它应该是位于飞机的中心 
+				//也是为了保证飞机在随手指移动的时候 子弹能跟随飞机移动
+				this.x = hero.x + (hero.w - this.w) / 2;
+				//与飞机的距离可调整
+				this.y = hero.y - this.h;
+				//速度 
+				this.speedY = 5;
+				//攻击力
+				this.power = 1;
+			}
+			//绘制子弹
+			Bullet.prototype.draw = function() {
+					context.drawImage(this.img, this.x, this.y);
+				}
+				//子弹的移动
+			Bullet.prototype.move = function() {
+					this.y -= this.speedY;
+				}
+				//var bullet = new Bullet();
+			var bulletArr = []; //用于存放子弹
+
+			//5. 敌机的构造函数
+			function Enemy() {
+				//敌机有三种样式 且是随机出现的 所以 要判断什么时候出什么样的敌机
+				//三种样式的敌机 图片不同 宽不同 血量不同 速度不同 所以这些要分开写
+				var num = rand(0, 20);
+				if(num > 18) {
+					//绘制大飞机
+					this.img = imgObj.enemy2;
+					this.w = this.img.width / 10;
+					this.hp = 8;
+					this.speedY = 1;
+					//飞机是精灵图 由多张图片构成 想实现飞机爆炸的效果 就要知道一共有多少张图片
+					//用于记录图片的数量
+					this.length = 10;
+				} else if(num > 11) {
+					//绘制中飞机
+					this.img = imgObj.enemy3;
+					this.w = this.img.width / 6;
+					this.hp = 3;
+					this.speedY = 5;
+					this.length = 6;
+				} else {
+					//绘制大飞机
+					this.img = imgObj.enemy1;
+					this.w = this.img.width / 5;
+					this.hp = 1;
+					this.speedY = 8;
+					this.length = 5;
+				}
+				this.h = this.img.height;
+				//敌机在画布的位置 X轴 范围
+				this.x = rand(0, canvas.width - this.w);
+				//Y轴位置 由上面一点点出现
+				this.y = -this.h;
+				//精灵图中 每一个状态下敌机的下标
+				//初始都是0，只有碰上子弹 要爆炸的时候 会发生变化
+				this.index = 0;
+				//设置敌机是死是活 初始 活的
+				this.life = true;
+			}
+
+			function rand(min, max) {
+				return Math.random() * (max - min) + min;
+			}
+			//绘制敌机
+			Enemy.prototype.draw = function() {
+					//根据图片下标来裁减图片
+					context.drawImage(this.img, this.index * this.w, 0, this.w, this.h, this.x, this.y, this.w, this.h);
+					//context.drawImage(this.img, 0, 0, this.w, this.h, this.x, this.y, this.w, this.h);
+				}
+				//敌机的运动
+			Enemy.prototype.move = function() {
+				this.y += this.speedY;
+			}
+			var enemyArr = []; //存放敌机
+
+			//碰撞检测函数
+			function peng(r1, b1) {
+				var r1l = r1.x + r1.w;
+				var r1h = r1.y + r1.h;
+				var b1l = b1.x + b1.w;
+				var b1h = b1.y + b1.h;
+				if(r1.x <= b1l && b1.x <= r1l && b1.y <= r1h && r1.y <= b1h) {
+					return true;
+				}
+				return false;
+			}
+
+			//本游戏中的对象都是一些图片 所以 要绘制的话 就是载入图片
+			//2. 绘制游戏背景 游戏背景是一直变换的 所以选择在帧动画中进行绘制
+			var times = 0;
+			var init;
+			function ani() {
+				if(times >= canvas.height) {
+					times = 0; //保证背景一直存在
+				}
+				context.clearRect(0, 0, canvas.width, canvas.height);
+				//绘制背景 载入背景图片
+				//因为 背景是运动的 所以让y 每次增加1 因为初始为0 所以将times++ 放在绘制背景下面
+				context.drawImage(imgObj.bg, 0, times, canvas.width, canvas.height);
+				//因为背景一直在往下运动，为了衔接流畅 在上面再绘制一张 类似轮播图 起过渡效果
+				context.drawImage(imgObj.bg, 0, times - canvas.height, canvas.width, canvas.height);
+				times++;
+				//绘制英雄机(一定要在背景的下面 否则会被背景遮挡)
+				if (hero.life == false) {
+					if(hero.index < hero.length){
+						if(times%10==0){
+							hero.index++;
+						}
+						hero.draw();
+					}else{
+						//清动画
+						hero.ani = true;
+						window.cancelAnimationFrame(init);
+						
+					}	
+				}
+				hero.draw();
+				//创建子弹
+				if(times % 20 == 0) {
+					//由每进一次动画 就创建一次改为 满足条件创建一次 这样能保证子弹间有间隔
+					var bullet = new Bullet();
+					bulletArr.push(bullet);
+				}
+				for(var i = 0; i < bulletArr.length; i++) {
+					//判断子弹是否飞出了界面 飞出来 则清除这个元素
+					if(bulletArr[i].y <= -bulletArr[i].h) {
+						bulletArr.splice(i, 1);
+						i--;
+						//跳过这个 继续执行下一个循环
+						continue;
+					}
+					//没出界 
+					if(hero.life == true){
+						bulletArr[i].draw();
+						bulletArr[i].move();
+					}
+				}
+				//创建敌机
+				if(times % 60 == 0) {
+					var enemy = new Enemy();
+					enemyArr.push(enemy);
+				}
+				for(var j = 0; j < enemyArr.length; j++) {
+					//判断敌机是否飞出了画布
+					if(enemyArr[j].y >= canvas.height) {
+						enemyArr.splice(j, 1);
+						j--;
+						continue;
+					}
+					if(enemyArr[j].life == false) { //死了
+						//绘制爆炸效果	
+						if(enemyArr[j].index < enemyArr[j].length) {
+							if(times % 5 == 0) { //延迟效果
+								enemyArr[j].index++;
+							}
+							enemyArr[j].draw();
+						}else{
+							enemyArr.splice(j, 1);
+							j--;
+							continue;
+						}
+					}
+					//其他敌机正常绘制
+					enemyArr[j].draw();
+					enemyArr[j].move();
+				}
+				//bullet.draw();
+				//bullet.move();
+					
+				//判断敌机是否与英雄机碰撞
+				for(var k = 0; k <enemyArr.length; k++){
+					if(peng(hero,enemyArr[k])){
+						//console.log('碰上了');
+						//碰撞后英雄机爆炸
+						hero.life = false;
+					}
+				}
+
+
+				//判断子弹是否与敌机碰撞
+				for(var i = 0; i < bulletArr.length; i++) {
+					for(var j = 0; j < enemyArr.length; j++) {
+						if(peng(bulletArr[i], enemyArr[j])) {
+							//碰上以后 敌机的血量减少
+							enemyArr[j].hp -= bulletArr[i].power;
+							//子弹消失
+							bulletArr.splice(i, 1);
+							//为了平衡i++
+							i--;
+							//当敌机血量为0的时候 清除敌机
+							if(enemyArr[j].hp <= 0) {
+								//m 用来遍历这length张图片 让敌机实现一个爆炸效果
+								//此时 因为是在帧动画中 一次动画绘10张图片所以会很快，效果不明显
+								//for(var m = 0; m < enemyArr[j].length; m++) {
+								//enemyArr[j].index = m;
+								//根据下标重新绘制敌机
+								//enemyArr[j].draw();
+								//}
+
+								//利用属性解决问题 false 代表敌机死了，那么在帧动画里不需要绘制
+								enemyArr[j].life = false;
+								//死了 将速度降为零
+								enemyArr[j].speedY = 0;
+								//enemyArr.splice(j, 1);
+								//j--;
+								//break;
+							}
+							//i-- 后 当前的bulletArr[i]变为前一个子弹 
+							//已经与每个敌机比较过了 没有必要再次比较 所以break 跳出j 这个for循环
+							break;
+						}
+					}
+				}
+				if (hero.ani == false) {
+					init = window.requestAnimationFrame(ani);
+				}
+			}
+			ani();
+			
+		}
+
+		function load(loads) {
+
+		}
+	</script>
+
+</html>
